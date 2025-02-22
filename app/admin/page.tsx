@@ -526,7 +526,10 @@ export default function AdminPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => updateStatus(app.id, 'approved')}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateStatus(app.id, 'approved');
+                                }}
                                 disabled={app.status === 'approved'}
                               >
                                 Approve
@@ -534,7 +537,10 @@ export default function AdminPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => updateStatus(app.id, 'rejected')}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateStatus(app.id, 'rejected');
+                                }}
                                 disabled={app.status === 'rejected'}
                               >
                                 Reject
