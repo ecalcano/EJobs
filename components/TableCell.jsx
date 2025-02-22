@@ -6,11 +6,11 @@ export default function TableCell({ app, children }) {
     <td>
       {/* ...existing code... */}
       <Badge
-        variant={
+        status={
           app.status === 'approved'
-            ? 'success'
+            ? 'approved'
             : app.status === 'rejected'
-              ? 'error'
+              ? 'rejected'
               : 'default'
         }
       >

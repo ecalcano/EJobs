@@ -184,6 +184,7 @@ export default function AdminPage() {
         active: true,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingJob]);
 
   function handleLogout() {
@@ -498,10 +499,10 @@ export default function AdminPage() {
                             <Badge
                               variant={
                                 app.status === 'approved'
-                                  ? 'secondary' // replaced 'success' with 'secondary'
+                                  ? 'default'
                                   : app.status === 'rejected'
                                     ? 'destructive'
-                                    : 'default'
+                                    : 'secondary'
                               }
                             >
                               {app.status}

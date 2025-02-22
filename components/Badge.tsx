@@ -1,10 +1,17 @@
 import React from 'react'
 
-export default function Badge({ variant, children }) {
+export type BadgeStatus = 'approved' | 'rejected' | 'default'
+
+interface BadgeProps {
+  status: BadgeStatus;
+  children: React.ReactNode;
+}
+
+export default function Badge({ status, children }: BadgeProps) {
   const style =
-    variant === 'success'
+    status === 'approved'
       ? { backgroundColor: 'green', color: 'white' }
-      : variant === 'error'
+      : status === 'rejected'
         ? { backgroundColor: 'red', color: 'white' }
         : { backgroundColor: 'gray', color: 'white' }
 

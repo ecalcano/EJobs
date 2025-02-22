@@ -39,13 +39,15 @@ export function ApplicationDetailsDialog({
                 <div className="space-y-1">
                   <Field label="Status" value={
                     <div className="flex items-center gap-2">
-                      <Badge variant={
-                        application.status === 'approved'
-                          ? 'secondary' // changed from 'success'
-                          : application.status === 'rejected'
-                          ? 'destructive'
-                          : 'default'
-                      }>
+                      <Badge
+                        className={
+                          application.status === 'approved'
+                            ? 'bg-green-500 text-white'
+                            : application.status === 'rejected'
+                              ? 'bg-red-500 text-white'
+                              : 'bg-gray-500 text-white'
+                        }
+                      >
                         {application.status}
                       </Badge>
                       {application.status_date && (
