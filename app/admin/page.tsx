@@ -498,9 +498,9 @@ export default function AdminPage() {
                             <Badge
                               variant={
                                 app.status === 'approved'
-                                  ? 'secondary'  // changed from 'success'
+                                  ? 'secondary' // replaced 'success' with 'secondary'
                                   : app.status === 'rejected'
-                                    ? 'destructive'  // changed from 'error'
+                                    ? 'destructive'
                                     : 'default'
                               }
                             >
