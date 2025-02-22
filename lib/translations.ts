@@ -92,6 +92,10 @@ export const translations = {
     personalInfo: "Personal Information",
     educationTraining: "Education & Training",
     technicalSkills: "Technical Skills",
+    // Add short versions for mobile
+    personalInfoShort: "Info",
+    educationTrainingShort: "Education",
+    technicalSkillsShort: "Skills",
   },
   es: {
     // Personal Info
@@ -187,6 +191,10 @@ export const translations = {
     personalInfo: "Información Personal",
     educationTraining: "Educación y Formación",
     technicalSkills: "Habilidades Técnicas",
+    // Add short versions for mobile
+    personalInfoShort: "Info",
+    educationTrainingShort: "Educación",
+    technicalSkillsShort: "Habilidades",
   },
 };
 

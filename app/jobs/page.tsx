@@ -5,9 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
-import { BriefcaseIcon, MapPinIcon, BuildingIcon, ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  BriefcaseIcon,
+  MapPinIcon,
+  BuildingIcon,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Logo } from "@/components/ui/logo";
 
 type Job = {
   id: string;
@@ -24,7 +31,7 @@ type Job = {
 export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const searchParams = useSearchParams();
-  const jobId = searchParams.get('job');
+  const jobId = searchParams.get("job");
 
   useEffect(() => {
     fetchJobs();
@@ -32,13 +39,13 @@ export default function JobsPage() {
 
   async function fetchJobs() {
     const { data, error } = await supabase
-      .from('jobs')
-      .select('*')
-      .eq('active', true)
-      .order('created_at', { ascending: false });
+      .from("jobs")
+      .select("*")
+      .eq("active", true)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching jobs:', error);
+      console.error("Error fetching jobs:", error);
       return;
     }
 
@@ -47,45 +54,71 @@ export default function JobsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Hero Section */}
-      <div className="relative bg-primary/5 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent" />
-        </div>
-        <div className="relative max-w-7xl mx-auto py-24 px-6 sm:py-32 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-              Join Our Team at{" "}
-              <span className="text-primary">Gala Foods</span>
-            </h1>
-            <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-600">
-              Be part of a dynamic team dedicated to providing quality food and exceptional service to our community.
-            </p>
-            <div className="mt-10 flex gap-6 justify-center">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-6 w-6 text-primary" />
-                <span className="text-gray-700">Competitive Pay</span>
+      {/* Hero Section with Logo */}
+      <div className="relative overflow-hidden bg-white min-h-[600px] lg:min-h-[500px]">
+        {/* Background Pattern */}
+        <div className="fruit-pattern"></div>
+
+        {/* Content Container */}
+        <div className="container mx-auto relative">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start pt-8 lg:pt-16 pb-24 px-6">
+            {/* Logo Container */}
+            <div className="w-[280px] sm:w-[350px] lg:w-[450px] xl:w-[500px] mb-12 lg:mb-0">
+              <Logo className="transition-all duration-500 hover:brightness-110 filter drop-shadow-xl" />
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 text-center lg:text-left lg:pl-12 xl:pl-16">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+                Join Our Team at{" "}
+                <span className="text-primary">Gala Foods</span>
+              </h1>
+
+              <p className="mt-6 text-xl text-gray-600 max-w-2xl lg:max-w-none mx-auto lg:mx-0">
+                Be part of a dynamic team dedicated to providing quality food
+                and exceptional service to our community.
+              </p>
+
+              {/* Benefits Section */}
+              <div className="mt-10 flex flex-wrap gap-6 justify-center lg:justify-start">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-6 w-6 text-primary" />
+                  <span className="text-gray-700">Competitive Pay</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-6 w-6 text-primary" />
+                  <span className="text-gray-700">Growth Opportunities</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-6 w-6 text-primary" />
+                  <span className="text-gray-700">Flexible Schedules</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-6 w-6 text-primary" />
-                <span className="text-gray-700">Growth Opportunities</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-6 w-6 text-primary" />
-                <span className="text-gray-700">Flexible Schedules</span>
+
+              {/* General Application Button */}
+              <div className="mt-12 flex justify-center lg:justify-start">
+                <Link href="/">
+                  <Button size="lg" className="text-lg px-8 py-6">
+                    Submit General Application
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* About Section */}
+      {/* Rest of the content */}
       <div className="max-w-7xl mx-auto py-16 px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900">Why Work With Us?</h2>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Why Work With Us?
+          </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            At Gala Foods, we believe in creating an environment where our employees can thrive. 
-            We offer competitive benefits, opportunities for advancement, and a supportive work culture.
+            At Gala Foods, we believe in creating an environment where our
+            employees can thrive. We offer competitive benefits, opportunities
+            for advancement, and a supportive work culture.
           </p>
         </div>
 
@@ -94,20 +127,25 @@ export default function JobsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <BriefcaseIcon className="h-8 w-8 text-primary" />
-              <h2 className="text-2xl font-bold text-gray-900">Open Positions</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Open Positions
+              </h2>
             </div>
             <Badge variant="secondary" className="text-base py-1.5">
-              {jobs.length} {jobs.length === 1 ? 'Position' : 'Positions'} Available
+              {jobs.length} {jobs.length === 1 ? "Position" : "Positions"}{" "}
+              Available
             </Badge>
           </div>
 
           <div className="grid gap-6">
             {jobs.map((job) => (
-              <Card 
-                key={job.id} 
+              <Card
+                key={job.id}
                 id={job.id}
                 className={`group transition-all duration-200 hover:shadow-lg border-2 ${
-                  jobId === job.id ? 'border-primary ring-1 ring-primary/20' : 'border-transparent'
+                  jobId === job.id
+                    ? "border-primary ring-1 ring-primary/20"
+                    : "border-transparent"
                 }`}
               >
                 <CardContent className="p-6">
@@ -149,13 +187,17 @@ export default function JobsPage() {
 
                   <div className="mt-6 space-y-4">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Description</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        Description
+                      </h4>
                       <p className="text-gray-600 line-clamp-3">
                         {job.description}
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Requirements</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        Requirements
+                      </h4>
                       <p className="text-gray-600 line-clamp-3">
                         {job.requirements}
                       </p>
@@ -169,8 +211,12 @@ export default function JobsPage() {
               <Card>
                 <CardContent className="py-12">
                   <div className="text-center text-gray-500">
-                    <p className="text-lg font-medium">No open positions at the moment.</p>
-                    <p className="mt-1">Please check back later for new opportunities.</p>
+                    <p className="text-lg font-medium">
+                      No open positions at the moment.
+                    </p>
+                    <p className="mt-1">
+                      Please check back later for new opportunities.
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -184,7 +230,9 @@ export default function JobsPage() {
         <div className="max-w-7xl mx-auto py-12 px-6 lg:px-8">
           <div className="text-center text-gray-600">
             <p>© 2025 Gala Foods. All rights reserved.</p>
-            <p className="mt-2">Questions? Contact our HR department at careers@galafoods.com</p>
+            <p className="mt-2">
+              Questions? Contact our HR department at careers@galafoods.com
+            </p>
           </div>
         </div>
       </footer>

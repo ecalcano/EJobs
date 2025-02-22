@@ -18,6 +18,7 @@ import { EducationTab } from "@/components/application/education-tab";
 import { TechnicalSkillsTab } from "@/components/application/technical-skills-tab";
 import { ThankYouDialog } from "@/components/application/thank-you-dialog";
 import { translations, Language } from "@/lib/translations";
+import { Logo } from "@/components/ui/logo";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = [
@@ -304,6 +305,11 @@ export default function Home() {
 
       setShowThankYouDialog(true);
       form.reset();
+
+      // Add a slight delay before redirecting to ensure the dialog is seen
+      setTimeout(() => {
+        router.push("/jobs");
+      }, 2000);
     } catch (error: any) {
       console.error("Error submitting application:", error);
       toast.error(
@@ -323,8 +329,8 @@ export default function Home() {
 
       <div className="container mx-auto py-6">
         <div className="max-w-5xl mx-auto">
-          {/* Language Toggle */}
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-between items-center mb-4">
+            <Logo className="h-16" />
             <Button
               variant="outline"
               onClick={() => setLanguage(language === "en" ? "es" : "en")}
@@ -364,24 +370,37 @@ export default function Home() {
                   className="space-y-6"
                 >
                   <Tabs defaultValue="personal" className="w-full">
-                    <TabsList className="w-full tabs-list">
+                    <TabsList className="w-full tabs-list flex">
                       <TabsTrigger
                         value="personal"
                         className="tab data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                       >
-                        {t.personalInfo}
+                        <span className="hidden md:inline">
+                          {t.personalInfo}
+                        </span>
+                        <span className="md:hidden">{t.personalInfoShort}</span>
                       </TabsTrigger>
                       <TabsTrigger
                         value="education"
                         className="tab data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                       >
-                        {t.educationTraining}
+                        <span className="hidden md:inline">
+                          {t.educationTraining}
+                        </span>
+                        <span className="md:hidden">
+                          {t.educationTrainingShort}
+                        </span>
                       </TabsTrigger>
                       <TabsTrigger
                         value="skills"
                         className="tab data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                       >
-                        {t.technicalSkills}
+                        <span className="hidden md:inline">
+                          {t.technicalSkills}
+                        </span>
+                        <span className="md:hidden">
+                          {t.technicalSkillsShort}
+                        </span>
                       </TabsTrigger>
                     </TabsList>
 

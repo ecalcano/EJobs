@@ -24,7 +24,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 75% 55%; /* Modern red color */
+    --primary: 0 85% 45%; /* Stronger red color */
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -36,7 +36,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 0 75% 55%; /* Modern red color */
+    --ring: 0 85% 45%; /* Stronger red color */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -87,7 +87,7 @@
 }
 
 [role="tab"] {
-  @apply text-xl font-bold px-8 py-4 rounded-lg transition-all duration-300;
+  @apply text-sm md:text-base font-medium px-3 py-2 md:px-6 md:py-3 rounded-lg transition-all duration-300 flex-1 text-center;
 }
 
 [role="tab"][data-state="active"] {
@@ -148,4 +148,47 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Add new decorative shapes */
+.decorative-shape {
+  @apply absolute opacity-30 blur-sm;
+  background-image: radial-gradient(
+    circle at center,
+    currentColor 60%,
+    transparent
+  );
+}
+
+.shape-apple {
+  @apply w-16 h-16 text-red-500;
+  clip-path: path(
+    "M8 32C8 16 16 8 32 8s24 8 24 24-8 24-24 24S8 48 8 32z M32 8c0-8 4-8 4 0"
+  );
+}
+
+.shape-orange {
+  @apply w-12 h-12 text-orange-400;
+  border-radius: 50%;
+}
+
+.shape-leaf {
+  @apply w-10 h-10 text-green-500;
+  clip-path: path("M0 32C0 16 16 0 32 0s32 16 32 32-16 32-32 32S0 48 0 32z");
+  transform: rotate(45deg);
+}
+
+/* Grocery themed decorative shapes */
+.fruit-pattern {
+  @apply absolute inset-0 opacity-[0.07] pointer-events-none;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M30 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15zm-5-15c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5z' fill='%23dc2626'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.produce-accent {
+  @apply absolute;
+  background: linear-gradient(
+    45deg,
+    rgba(220, 38, 38, 0.05) 0%,
+    rgba(34, 197, 94, 0.05) 100%
+  );
 }
