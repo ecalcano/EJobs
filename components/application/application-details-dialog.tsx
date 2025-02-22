@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ApplicationDetailsDialogProps {
@@ -21,6 +20,13 @@ export function ApplicationDetailsDialog({
   onOpenChange,
 }: ApplicationDetailsDialogProps) {
   if (!application) return null;
+
+  const bgClass =
+    application.status === 'approved'
+      ? 'bg-green-500'
+      : application.status === 'rejected'
+        ? 'bg-red-500'
+        : 'bg-gray-500';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,17 +45,9 @@ export function ApplicationDetailsDialog({
                 <div className="space-y-1">
                   <Field label="Status" value={
                     <div className="flex items-center gap-2">
-                      <Badge
-                        className={
-                          application.status === 'approved'
-                            ? 'bg-green-500 text-white'
-                            : application.status === 'rejected'
-                              ? 'bg-red-500 text-white'
-                              : 'bg-gray-500 text-white'
-                        }
-                      >
+                      <button className={`px-2 py-1 rounded text-white ${bgClass}`}>
                         {application.status}
-                      </Badge>
+                      </button>
                       {application.status_date && (
                         <span className="text-sm text-muted-foreground">
                           {new Date(application.status_date).toLocaleDateString()} by {application.status_by || 'admin'}
@@ -139,9 +137,9 @@ export function ApplicationDetailsDialog({
                   <div className="flex flex-wrap gap-2">
                     {application.computer_skills && application.computer_skills.length > 0 ? (
                       application.computer_skills.map((skill: string) => (
-                        <Badge key={skill} variant="secondary">
+                        <button key={skill} className="px-2 py-1 rounded bg-secondary text-white">
                           {skill}
-                        </Badge>
+                        </button>
                       ))
                     ) : (
                       <span className="text-muted-foreground">No computer skills selected</span>
@@ -155,9 +153,9 @@ export function ApplicationDetailsDialog({
                   <div className="flex flex-wrap gap-2">
                     {application.equipment_skills && application.equipment_skills.length > 0 ? (
                       application.equipment_skills.map((skill: string) => (
-                        <Badge key={skill} variant="secondary">
+                        <button key={skill} className="px-2 py-1 rounded bg-secondary text-white">
                           {skill}
-                        </Badge>
+                        </button>
                       ))
                     ) : (
                       <span className="text-muted-foreground">No equipment skills selected</span>
@@ -171,9 +169,9 @@ export function ApplicationDetailsDialog({
                   <div className="flex flex-wrap gap-2">
                     {application.position_preferences && application.position_preferences.length > 0 ? (
                       application.position_preferences.map((position: string) => (
-                        <Badge key={position} variant="secondary">
+                        <button key={position} className="px-2 py-1 rounded bg-secondary text-white">
                           {position}
-                        </Badge>
+                        </button>
                       ))
                     ) : (
                       <span className="text-muted-foreground">No positions selected</span>
@@ -187,9 +185,9 @@ export function ApplicationDetailsDialog({
                     <h4 className="font-medium mb-2">Department Preferences</h4>
                     <div className="flex flex-wrap gap-2">
                       {application.department_preferences.map((dept: string) => (
-                        <Badge key={dept} variant="secondary">
+                        <button key={dept} className="px-2 py-1 rounded bg-secondary text-white">
                           {dept}
-                        </Badge>
+                        </button>
                       ))}
                     </div>
                   </div>

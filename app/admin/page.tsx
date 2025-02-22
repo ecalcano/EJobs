@@ -496,17 +496,17 @@ export default function AdminPage() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge
-                              variant={
+                            <button
+                              className={`px-2 py-1 rounded text-white ${
                                 app.status === 'approved'
-                                  ? 'default'
+                                  ? 'bg-green-500'
                                   : app.status === 'rejected'
-                                    ? 'destructive'
-                                    : 'secondary'
-                              }
+                                    ? 'bg-red-500'
+                                    : 'bg-gray-500'
+                              }`}
                             >
                               {app.status}
-                            </Badge>
+                            </button>
                           </TableCell>
                           <TableCell>
                             {app.resume_url && (

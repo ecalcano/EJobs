@@ -1,21 +1,19 @@
 import React from 'react'
-import Badge from './Badge'
 
 export default function TableCell({ app, children }) {
+  const bgClass =
+    app.status === 'approved'
+      ? 'bg-green-500'
+      : app.status === 'rejected'
+        ? 'bg-red-500'
+        : 'bg-gray-500'
+
   return (
     <td>
       {/* ...existing code... */}
-      <Badge
-        status={
-          app.status === 'approved'
-            ? 'approved'
-            : app.status === 'rejected'
-              ? 'rejected'
-              : 'default'
-        }
-      >
-        {/* ...existing content... */}
-      </Badge>
+      <button className={`px-2 py-1 rounded text-white ${bgClass}`}>
+        {app.status}
+      </button>
       {/* ...existing code... */}
       {children}
     </td>
