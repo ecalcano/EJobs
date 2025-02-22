@@ -40,11 +40,11 @@ export function ApplicationDetailsDialog({
                   <Field label="Status" value={
                     <div className="flex items-center gap-2">
                       <Badge variant={
-                        application.status === 'approved' 
-                          ? 'success' 
-                          : application.status === 'rejected' 
-                          ? 'destructive' 
-                          : 'secondary'
+                        application.status === 'approved'
+                          ? 'secondary' // changed from 'success'
+                          : application.status === 'rejected'
+                          ? 'destructive'
+                          : 'default'
                       }>
                         {application.status}
                       </Badge>

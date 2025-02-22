@@ -497,11 +497,11 @@ export default function AdminPage() {
                           <TableCell>
                             <Badge
                               variant={
-                                app.status === 'approved' 
-                                  ? 'success' 
-                                  : app.status === 'rejected' 
-                                  ? 'destructive' 
-                                  : 'secondary'
+                                app.status === 'approved'
+                                  ? 'secondary'  // changed from 'success'
+                                  : app.status === 'rejected'
+                                    ? 'destructive'  // changed from 'error'
+                                    : 'default'
                               }
                             >
                               {app.status}
@@ -762,9 +762,7 @@ export default function AdminPage() {
                           <TableCell>{job.location}</TableCell>
                           <TableCell>{job.type}</TableCell>
                           <TableCell>
-                            <Badge
-                              variant={job.active ? "success" : "secondary"}
-                            >
+                            <Badge variant={job.active ? "default" : "secondary"}>
                               {job.active ? "Active" : "Inactive"}
                             </Badge>
                           </TableCell>
