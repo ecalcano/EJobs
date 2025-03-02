@@ -478,10 +478,10 @@ export default function JobsPage() {
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                Don't See the Right Fit?
+                Don&apos;t See the Right Fit?
               </h2>
               <p className="text-lg text-gray-600">
-                We're always looking for talented individuals to join our team. Submit a general application and we'll keep your resume on file for future opportunities.
+                We&apos;re always looking for talented individuals to join our team. Submit a general application and we&apos;ll keep your resume on file for future opportunities.
               </p>
             </div>
             <div className="flex-shrink-0">

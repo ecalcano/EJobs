@@ -54,57 +54,72 @@ type Application = {
 };
 
 export default function ApplicationDetailsPage() {
-  const router = useRouter();
   const params = useParams();
+  const router = useRouter();
   const [application, setApplication] = useState<Application | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [approveLoading, setApproveLoading] = useState(false);
   const [rejectLoading, setRejectLoading] = useState(false);
+  const [adminUsername, setAdminUsername] = useState('admin');
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
-    if (!isAuthenticated) {
-      router.push('/admin/login');
+    // Check authentication on client-side only
+    const authStatus = localStorage.getItem('isAdminAuthenticated');
+    setIsAuthenticated(!!authStatus);
+    
+    if (typeof window !== 'undefined') {
+      setAdminUsername(localStorage.getItem('adminUsername') || 'admin');
+    }
+    
+    if (!authStatus) {
+      router.push("/admin/login");
       return;
     }
+  }, [router]);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
     if (!application || application.id !== params.id) {
       console.log("Fetching application with ID:", params.id);
+      
+      const fetchApplication = async () => {
+        if (!loading) {
+          setLoading(true);
+        }
+        
+        try {
+          const { data, error } = await supabase
+            .from("applications")
+            .select("*")
+            .eq("id", params.id)
+            .single();
+
+          if (error) {
+            console.error("Error fetching application:", error);
+            toast.error("Failed to load application details");
+            router.push("/admin");
+            return;
+          }
+
+          if (data) {
+            setApplication(data);
+          } else {
+            toast.error("Application not found");
+            router.push("/admin");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          toast.error("An unexpected error occurred");
+        } finally {
+          setLoading(false);
+        }
+      };
+      
       fetchApplication();
     }
-  }, [params.id]);
-
-  async function fetchApplication() {
-    if (!loading) {
-      setLoading(true);
-    }
-    
-    console.log("Fetching application data...", params.id);
-    
-    try {
-      const { data, error } = await supabase
-        .from('applications')
-        .select('*')
-        .eq('id', params.id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching application:", error);
-        toast.error("Failed to fetch application details");
-        setLoading(false);
-        return;
-      }
-
-      console.log("Application data retrieved successfully");
-      
-      setApplication(data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Exception in fetchApplication:", err);
-      toast.error("An error occurred while loading application details");
-      setLoading(false);
-    }
-  }
+  }, [params.id, application, router, loading, supabase, isAuthenticated]);
 
   async function updateStatus(status: string) {
     if (!application) return;
@@ -120,7 +135,7 @@ export default function ApplicationDetailsPage() {
         .from('applications')
         .update({ 
           status,
-          status_by: localStorage.getItem('adminUsername') || 'admin',
+          status_by: adminUsername,
           status_date: new Date().toISOString()
         })
         .eq('id', application.id);
@@ -135,7 +150,7 @@ export default function ApplicationDetailsPage() {
       setApplication({
         ...application,
         status,
-        status_by: localStorage.getItem('adminUsername') || 'admin',
+        status_by: adminUsername,
         status_date: new Date().toISOString()
       });
     } catch (err) {

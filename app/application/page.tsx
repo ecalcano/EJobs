@@ -216,30 +216,32 @@ export default function Home() {
     // Clean the job ID by removing any trailing segments
     const cleanJobId = jobId?.split("/")[0];
     if (cleanJobId) {
+      const fetchJob = async (jobId: string) => {
+        try {
+          const { data, error } = await supabase
+            .from("jobs")
+            .select("id, title, location")
+            .eq("id", jobId)
+            .single();
+
+          if (error) {
+            console.error("Error fetching job:", error);
+            return;
+          }
+
+          if (data) {
+            setSelectedJob(data);
+            form.setValue("jobTitle", data.title);
+            form.setValue("jobLocation", data.location);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      };
+      
       fetchJob(cleanJobId);
     }
-  }, [searchParams]);
-
-  async function fetchJob(jobId: string) {
-    try {
-      const { data, error } = await supabase
-        .from("jobs")
-        .select("id, title, location")
-        .eq("id", jobId)
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        setSelectedJob(data);
-        form.setValue("jobTitle", data.title);
-        form.setValue("jobLocation", data.location);
-      }
-    } catch (error) {
-      console.error("Error fetching job:", error);
-      toast.error("Failed to load job details");
-    }
-  }
+  }, [searchParams, supabase]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (isSubmitting) return;

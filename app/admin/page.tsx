@@ -155,21 +155,27 @@ const storeFormSchema = z.object({
 
 export default function AdminPage() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("applications");
   const [applications, setApplications] = useState<Application[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [showJobDialog, setShowJobDialog] = useState(false);
-  const [showUserDialog, setShowUserDialog] = useState(false);
+  const [stores, setStores] = useState<Store[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingStore, setEditingStore] = useState<Store | null>(null);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [userDialogOpen, setUserDialogOpen] = useState(false);
+  const [storeDialogOpen, setStoreDialogOpen] = useState(false);
+  const [adminUsername, setAdminUsername] = useState('');
   const [searchField, setSearchField] = useState("name");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [showApplicationDialog, setShowApplicationDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState("applications");
-  const [stores, setStores] = useState<Store[]>([]);
-  const [storeDialogOpen, setStoreDialogOpen] = useState(false);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [showJobDialog, setShowJobDialog] = useState(false);
+  const [showUserDialog, setShowUserDialog] = useState(false);
   const [storeSearchQuery, setStoreSearchQuery] = useState("");
 
   const jobForm = useForm<z.infer<typeof jobFormSchema>>({
@@ -210,16 +216,18 @@ export default function AdminPage() {
   });
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
-    if (!isAuthenticated) {
-      router.push('/admin/login');
-      return;
+    const authStatus = localStorage.getItem('isAdminAuthenticated');
+    setIsAuthenticated(!!authStatus);
+    setAdminUsername(localStorage.getItem('adminUsername') || 'admin');
+    
+    if (!authStatus) {
+      router.push("/admin/login");
+    } else {
+      fetchApplications();
+      fetchJobs();
+      fetchUsers();
+      fetchStores();
     }
-
-    fetchApplications();
-    fetchJobs();
-    fetchUsers();
-    fetchStores();
   }, [router]);
 
   useEffect(() => {
@@ -246,7 +254,7 @@ export default function AdminPage() {
         active: true,
       });
     }
-  }, [editingJob]);
+  }, [editingJob, jobForm]);
 
   useEffect(() => {
     if (selectedStore) {
@@ -278,7 +286,10 @@ export default function AdminPage() {
   }, [selectedStore, storeForm]);
 
   function handleLogout() {
-    localStorage.removeItem('isAdminAuthenticated');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('isAdminAuthenticated');
+      localStorage.removeItem('adminUsername');
+    }
     router.push('/admin/login');
   }
 
@@ -371,7 +382,7 @@ export default function AdminPage() {
       .from('applications')
       .update({ 
         status,
-        status_by: localStorage.getItem('adminUsername') || 'admin',
+        status_by: adminUsername,
         status_date: new Date().toISOString()
       })
       .eq('id', id);
@@ -684,10 +695,11 @@ export default function AdminPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="bg-white rounded-full h-10 w-10 flex items-center justify-center shadow-md">
-              <span className="font-semibold text-red-600">
-                {localStorage.getItem('adminUsername')?.charAt(0).toUpperCase() || 'A'}
-              </span>
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-medium">
+                {adminUsername?.charAt(0).toUpperCase() || 'A'}
+              </div>
+              <div className="text-sm font-medium">{adminUsername || 'Admin'}</div>
             </div>
           </div>
         </div>

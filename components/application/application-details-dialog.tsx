@@ -41,7 +41,7 @@ export function ApplicationDetailsDialog({
                     <div className="flex items-center gap-2">
                       <Badge variant={
                         application.status === 'approved' 
-                          ? 'success' 
+                          ? 'default' 
                           : application.status === 'rejected' 
                           ? 'destructive' 
                           : 'secondary'

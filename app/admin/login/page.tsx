@@ -29,7 +29,10 @@ export default function LoginPage() {
       if (error) throw error;
 
       if (data) {
-        localStorage.setItem('isAdminAuthenticated', 'true');
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('isAdminAuthenticated', 'true');
+          localStorage.setItem('adminUsername', username);
+        }
         router.push('/admin');
       } else {
         toast.error('Invalid credentials');
