@@ -87,6 +87,10 @@ export const translations = {
     submitting: "Submitting...",
     jobApplication: "Job Application",
     applyingFor: "Applying for:",
+    next: "Next",
+    previous: "Previous",
+    generalApplication: "Submit a general application for future opportunities",
+    privacyNotice: "Your privacy is important to us. All information submitted will be kept confidential.",
 
     // Tab Labels
     personalInfo: "Personal Information",
@@ -186,6 +190,10 @@ export const translations = {
     submitting: "Enviando...",
     jobApplication: "Solicitud de Empleo",
     applyingFor: "Aplicando para:",
+    next: "Siguiente",
+    previous: "Anterior",
+    generalApplication: "Envía una solicitud general para futuras oportunidades",
+    privacyNotice: "Tu privacidad es importante para nosotros. Toda la información enviada se mantendrá confidencial.",
 
     // Tab Labels
     personalInfo: "Información Personal",

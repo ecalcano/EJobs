@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UseFormReturn } from "react-hook-form";
 import { Language, translations } from "@/lib/translations";
+import { EnhancedFormField } from "./enhanced-form-field";
+import { Building, BookOpen, GraduationCap, Mail, Phone, MapPin } from "lucide-react";
 
 interface EducationTabProps {
   form: UseFormReturn<any>;
@@ -24,35 +26,25 @@ export function EducationTab({ form, language }: EducationTabProps) {
   return (
     <div className="space-y-6">
       {/* High School */}
-      <div className="p-6 border rounded-lg bg-white shadow-sm">
-        <h3 className="font-semibold mb-4">{t.highSchool}</h3>
+      <div className="p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <h3 className="font-semibold mb-4 text-lg text-gray-800">{t.highSchool}</h3>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EnhancedFormField
+              form={form}
               name="highSchool.name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.schoolName}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t.schoolName}
+              placeholder={language === "en" ? "Enter high school name" : "Ingrese el nombre de la escuela"}
+              icon={<BookOpen className="h-4 w-4" />}
+              showInputStatusMessage={false}
             />
-            <FormField
-              control={form.control}
+            <EnhancedFormField
+              form={form}
               name="highSchool.address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.address}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t.address}
+              placeholder={language === "en" ? "Enter school address" : "Ingrese la dirección de la escuela"}
+              icon={<MapPin className="h-4 w-4" />}
+              showInputStatusMessage={false}
             />
           </div>
           <div className="flex items-center">
@@ -65,9 +57,10 @@ export function EducationTab({ form, language }: EducationTabProps) {
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                   </FormControl>
-                  <FormLabel className="text-sm font-normal">
+                  <FormLabel className="text-sm font-normal cursor-pointer">
                     {t.graduated}
                   </FormLabel>
                   <FormMessage />
@@ -79,51 +72,38 @@ export function EducationTab({ form, language }: EducationTabProps) {
       </div>
 
       {/* College */}
-      <div className="p-6 border rounded-lg bg-white shadow-sm">
-        <h3 className="font-semibold mb-4">{t.college}</h3>
+      <div className="p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <h3 className="font-semibold mb-4 text-lg text-gray-800">{t.college}</h3>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EnhancedFormField
+              form={form}
               name="college.name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.collegeName}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t.collegeName}
+              placeholder={language === "en" ? "Enter college name" : "Ingrese el nombre de la universidad"}
+              icon={<GraduationCap className="h-4 w-4" />}
+              showInputStatusMessage={false}
             />
-            <FormField
-              control={form.control}
+            <EnhancedFormField
+              form={form}
               name="college.address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.address}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t.address}
+              placeholder={language === "en" ? "Enter college address" : "Ingrese la dirección de la universidad"}
+              icon={<MapPin className="h-4 w-4" />}
+              showInputStatusMessage={false}
             />
           </div>
-          <div className="flex items-center gap-4">
-            <FormField
-              control={form.control}
-              name="college.degree"
-              render={({ field }) => (
-                <FormItem className="w-1/3">
-                  <FormLabel>{t.degree}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div className="w-full md:w-1/3">
+              <EnhancedFormField
+                form={form}
+                name="college.degree"
+                label={t.degree}
+                placeholder={language === "en" ? "Enter degree" : "Ingrese el título"}
+                icon={<BookOpen className="h-4 w-4" />}
+                showInputStatusMessage={false}
+              />
+            </div>
             <FormField
               control={form.control}
               name="college.graduated"
@@ -133,9 +113,10 @@ export function EducationTab({ form, language }: EducationTabProps) {
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                   </FormControl>
-                  <FormLabel className="text-sm font-normal">
+                  <FormLabel className="text-sm font-normal cursor-pointer">
                     {t.graduated}
                   </FormLabel>
                   <FormMessage />
@@ -147,51 +128,38 @@ export function EducationTab({ form, language }: EducationTabProps) {
       </div>
 
       {/* Other Education */}
-      <div className="p-6 border rounded-lg bg-white shadow-sm">
-        <h3 className="font-semibold mb-4">{t.otherEducation}</h3>
+      <div className="p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <h3 className="font-semibold mb-4 text-lg text-gray-800">{t.otherEducation}</h3>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EnhancedFormField
+              form={form}
               name="otherEducation.name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.otherInstitutionName}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t.otherInstitutionName}
+              placeholder={language === "en" ? "Enter institution name" : "Ingrese el nombre de la institución"}
+              icon={<Building className="h-4 w-4" />}
+              showInputStatusMessage={false}
             />
-            <FormField
-              control={form.control}
+            <EnhancedFormField
+              form={form}
               name="otherEducation.address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.address}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t.address}
+              placeholder={language === "en" ? "Enter institution address" : "Ingrese la dirección de la institución"}
+              icon={<MapPin className="h-4 w-4" />}
+              showInputStatusMessage={false}
             />
           </div>
-          <div className="flex items-center gap-4">
-            <FormField
-              control={form.control}
-              name="otherEducation.degree"
-              render={({ field }) => (
-                <FormItem className="w-1/3">
-                  <FormLabel>{t.degreeCertification}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div className="w-full md:w-1/3">
+              <EnhancedFormField
+                form={form}
+                name="otherEducation.degree"
+                label={t.degreeCertification}
+                placeholder={language === "en" ? "Enter certification" : "Ingrese la certificación"}
+                icon={<BookOpen className="h-4 w-4" />}
+                showInputStatusMessage={false}
+              />
+            </div>
             <FormField
               control={form.control}
               name="otherEducation.graduated"
@@ -201,9 +169,10 @@ export function EducationTab({ form, language }: EducationTabProps) {
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                   </FormControl>
-                  <FormLabel className="text-sm font-normal">
+                  <FormLabel className="text-sm font-normal cursor-pointer">
                     {t.graduated}
                   </FormLabel>
                   <FormMessage />
@@ -216,104 +185,71 @@ export function EducationTab({ form, language }: EducationTabProps) {
 
       {/* References */}
       {[0, 1].map((index) => (
-        <div key={index} className="p-6 border rounded-lg bg-white shadow-sm">
-          <h3 className="font-semibold mb-4">{t.references}</h3>
+        <div key={index} className="p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+          <h3 className="font-semibold mb-4 text-lg text-gray-800">{t.references} #{index + 1}</h3>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.name`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.referenceName}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={t.referenceName}
+                placeholder={language === "en" ? "Enter reference name" : "Ingrese el nombre de la referencia"}
+                icon={<GraduationCap className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
-              <FormField
-                control={form.control}
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.email`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t.referenceEmail}</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={t.referenceEmail}
+                type="email"
+                placeholder={language === "en" ? "Enter reference email" : "Ingrese el correo de la referencia"}
+                icon={<Mail className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.phone`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{common.phone}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={common.phone}
+                type="tel"
+                placeholder={language === "en" ? "Enter reference phone" : "Ingrese el teléfono de la referencia"}
+                icon={<Phone className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
-              <FormField
-                control={form.control}
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.address`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{common.address}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={common.address}
+                placeholder={language === "en" ? "Enter reference address" : "Ingrese la dirección de la referencia"}
+                icon={<MapPin className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.city`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{common.city}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={common.city}
+                placeholder={language === "en" ? "City" : "Ciudad"}
+                icon={<Building className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
-              <FormField
-                control={form.control}
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.state`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{common.state}</FormLabel>
-                    <FormControl>
-                      <Input maxLength={2} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={common.state}
+                placeholder={language === "en" ? "State" : "Estado"}
+                icon={<MapPin className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
-              <FormField
-                control={form.control}
+              <EnhancedFormField
+                form={form}
                 name={`references.${index}.zipCode`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{common.zipCode}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label={common.zipCode}
+                placeholder={language === "en" ? "Zip Code" : "Código Postal"}
+                icon={<MapPin className="h-4 w-4" />}
+                showInputStatusMessage={false}
               />
             </div>
           </div>

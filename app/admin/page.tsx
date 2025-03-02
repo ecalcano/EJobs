@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -23,6 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,6 +47,17 @@ import {
   Users,
   LogOut,
   Search,
+  LayoutDashboard,
+  ChevronRight,
+  CheckCircle,
+  XCircle,
+  FileText,
+  Store,
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  ToggleLeft,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -96,6 +109,21 @@ type User = {
   created_at: string;
 };
 
+type Store = {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  phone: string | null;
+  email: string | null;
+  description: string | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 const jobFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   department: z.string().min(1, "Department is required"),
@@ -112,6 +140,19 @@ const userFormSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+const storeFormSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Store name is required"),
+  address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  zip_code: z.string().min(1, "ZIP code is required"),
+  phone: z.string().optional().nullable(),
+  email: z.string().email("Invalid email address").optional().nullable(),
+  description: z.string().optional().nullable(),
+  active: z.boolean().default(true),
+});
+
 export default function AdminPage() {
   const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
@@ -125,6 +166,11 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [showApplicationDialog, setShowApplicationDialog] = useState(false);
+  const [activeTab, setActiveTab] = useState("applications");
+  const [stores, setStores] = useState<Store[]>([]);
+  const [storeDialogOpen, setStoreDialogOpen] = useState(false);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [storeSearchQuery, setStoreSearchQuery] = useState("");
 
   const jobForm = useForm<z.infer<typeof jobFormSchema>>({
     resolver: zodResolver(jobFormSchema),
@@ -148,6 +194,21 @@ export default function AdminPage() {
     },
   });
 
+  const storeForm = useForm<z.infer<typeof storeFormSchema>>({
+    resolver: zodResolver(storeFormSchema),
+    defaultValues: {
+      name: "",
+      address: "",
+      city: "",
+      state: "",
+      zip_code: "",
+      phone: "",
+      email: "",
+      description: "",
+      active: true,
+    },
+  });
+
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
     if (!isAuthenticated) {
@@ -158,6 +219,7 @@ export default function AdminPage() {
     fetchApplications();
     fetchJobs();
     fetchUsers();
+    fetchStores();
   }, [router]);
 
   useEffect(() => {
@@ -185,6 +247,35 @@ export default function AdminPage() {
       });
     }
   }, [editingJob]);
+
+  useEffect(() => {
+    if (selectedStore) {
+      storeForm.reset({
+        id: selectedStore.id,
+        name: selectedStore.name,
+        address: selectedStore.address,
+        city: selectedStore.city,
+        state: selectedStore.state,
+        zip_code: selectedStore.zip_code,
+        phone: selectedStore.phone,
+        email: selectedStore.email,
+        description: selectedStore.description,
+        active: selectedStore.active,
+      });
+    } else {
+      storeForm.reset({
+        name: "",
+        address: "",
+        city: "",
+        state: "",
+        zip_code: "",
+        phone: "",
+        email: "",
+        description: "",
+        active: true,
+      });
+    }
+  }, [selectedStore, storeForm]);
 
   function handleLogout() {
     localStorage.removeItem('isAdminAuthenticated');
@@ -252,6 +343,27 @@ export default function AdminPage() {
     }
 
     setUsers(data);
+  }
+
+  async function fetchStores() {
+    try {
+      console.log("Fetching stores...");
+      const { data, error } = await supabase
+        .from("stores")
+        .select("*")
+        .order("name");
+
+      if (error) {
+        console.error("Error fetching stores:", error);
+        throw error;
+      }
+      
+      console.log("Fetched stores successfully:", data?.length || 0, "stores found");
+      setStores(data || []);
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+      toast.error("Failed to fetch stores");
+    }
   }
 
   async function updateStatus(id: string, status: string) {
@@ -368,6 +480,104 @@ export default function AdminPage() {
     fetchUsers();
   }
 
+  async function onStoreSubmit(values: z.infer<typeof storeFormSchema>) {
+    console.log("onStoreSubmit called with values:", values);
+    try {
+      if (values.id) {
+        // Update existing store
+        console.log("Updating existing store with ID:", values.id);
+        const { data, error } = await supabase
+          .from("stores")
+          .update({
+            name: values.name,
+            address: values.address,
+            city: values.city,
+            state: values.state,
+            zip_code: values.zip_code,
+            phone: values.phone,
+            email: values.email,
+            description: values.description,
+            active: values.active,
+          })
+          .eq("id", values.id)
+          .select();
+
+        if (error) {
+          console.error("Supabase update error:", error);
+          throw error;
+        }
+        
+        console.log("Store updated successfully, response:", data);
+        toast.success("Store updated successfully");
+      } else {
+        // Create new store
+        console.log("Creating new store with name:", values.name);
+        const { data, error } = await supabase
+          .from("stores")
+          .insert({
+            name: values.name,
+            address: values.address,
+            city: values.city,
+            state: values.state,
+            zip_code: values.zip_code,
+            phone: values.phone,
+            email: values.email,
+            description: values.description,
+            active: values.active,
+          })
+          .select();
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          throw error;
+        }
+        
+        console.log("New store created successfully, response:", data);
+        toast.success("Store created successfully");
+      }
+
+      setStoreDialogOpen(false);
+      setSelectedStore(null);
+      fetchStores();
+    } catch (error: any) {
+      console.error("Error saving store:", error);
+      toast.error(error.message || "Failed to save store");
+    }
+  }
+
+  async function deleteStore(id: string) {
+    try {
+      const { error } = await supabase.from("stores").delete().eq("id", id);
+
+      if (error) throw error;
+      fetchStores();
+    } catch (error) {
+      console.error("Error deleting store:", error);
+    }
+  }
+
+  function editStore(store: Store) {
+    setSelectedStore(store);
+    setStoreDialogOpen(true);
+  }
+
+  function addNewStore() {
+    console.log("addNewStore function called");
+    setSelectedStore(null);
+    setStoreDialogOpen(true);
+    console.log("storeDialogOpen set to:", true);
+  }
+
+  function handleDialogChange(open: boolean) {
+    console.log("Dialog open state changed to:", open);
+    setStoreDialogOpen(open);
+    if (!open) {
+      // Reset the form when dialog is closed
+      setSelectedStore(null);
+      storeForm.reset();
+    }
+  }
+
   const filteredApplications = applications.filter(app => {
     const searchLower = searchTerm.toLowerCase();
     
@@ -398,43 +608,166 @@ export default function AdminPage() {
     }
   });
 
-  return (
-    <>
-      <ApplicationDetailsDialog
-        application={selectedApplication}
-        open={showApplicationDialog}
-        onOpenChange={setShowApplicationDialog}
-      />
+  const filteredStores = stores.filter((store) =>
+    store.name.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
+    store.city.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
+    store.state.toLowerCase().includes(storeSearchQuery.toLowerCase())
+  );
 
-      <div className="container mx-auto py-6">
-        <div className="flex justify-end mb-6">
-          <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+  return (
+    <div className="min-h-screen bg-[#f8f8f8]">
+      {/* Sidebar */}
+      <div className="fixed left-0 top-0 h-full w-64 bg-black text-white z-10 shadow-xl">
+        <div className="p-6">
+          <h1 className="text-2xl font-bold text-white mb-8">Admin Portal</h1>
+          
+          <nav className="space-y-1">
+            <button 
+              onClick={() => setActiveTab("applications")}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg bg-red-600 text-white font-medium"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+              <span>Dashboard</span>
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab("applications")}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              <ClipboardListIcon className="h-5 w-5" />
+              <span>Applications</span>
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab("jobs")}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              <Briefcase className="h-5 w-5" />
+              <span>Job Listings</span>
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab("stores")}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              <Store className="h-5 w-5" />
+              <span>Stores</span>
+            </button>
+            
+            <button 
+              onClick={() => setActiveTab("users")}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              <Users className="h-5 w-5" />
+              <span>Users</span>
+            </button>
+          </nav>
+        </div>
+        
+        <div className="absolute bottom-0 left-0 w-full p-6">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="ml-64 p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
+            <p className="text-gray-500 mt-1">Manage applications and job listings</p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="bg-white rounded-full h-10 w-10 flex items-center justify-center shadow-md">
+              <span className="font-semibold text-red-600">
+                {localStorage.getItem('adminUsername')?.charAt(0).toUpperCase() || 'A'}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <Tabs defaultValue="applications" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="applications">Applications</TabsTrigger>
-            <TabsTrigger value="jobs">Job Listings</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Total Applications</p>
+                  <h3 className="text-3xl font-bold mt-1">{applications.length}</h3>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <ClipboardListIcon className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Active Jobs</p>
+                  <h3 className="text-3xl font-bold mt-1">{jobs.filter(job => job.active).length}</h3>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Admin Users</p>
+                  <h3 className="text-3xl font-bold mt-1">{users.length}</h3>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="bg-white p-1 rounded-lg border border-gray-200 shadow-sm">
+            <TabsTrigger value="applications" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              Applications
+            </TabsTrigger>
+            <TabsTrigger value="jobs" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              Job Listings
+            </TabsTrigger>
+            <TabsTrigger value="stores" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              Stores
+            </TabsTrigger>
+            <TabsTrigger value="users" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              Users
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="applications">
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
+            <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
+              <CardHeader className="bg-white pb-4 border-b border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
-                    <ClipboardListIcon className="h-6 w-6" />
+                    <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <ClipboardListIcon className="h-4 w-4 text-red-600" />
+                    </div>
                     <CardTitle>Job Applications</CardTitle>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row items-center gap-2">
                     <Select
                       value={searchField}
                       onValueChange={setSearchField}
                     >
-                      <SelectTrigger className="w-[150px]">
+                      <SelectTrigger className="w-[150px] border-gray-200 bg-white">
                         <SelectValue placeholder="Search by..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -449,22 +782,22 @@ export default function AdminPage() {
                         <SelectItem value="status">Status</SelectItem>
                       </SelectContent>
                     </Select>
-                    <div className="relative w-64">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full sm:w-64">
+                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
                       <Input
                         placeholder={`Search by ${searchField}...`}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-8"
+                        className="pl-8 border-gray-200 bg-white"
                       />
                     </div>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
+              <CardContent className="p-0">
+                <div className="rounded-md">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-gray-50">
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Job Title</TableHead>
@@ -478,32 +811,34 @@ export default function AdminPage() {
                       {filteredApplications.map((app) => (
                         <TableRow 
                           key={app.id}
-                          className="cursor-pointer hover:bg-muted/50"
+                          className="cursor-pointer hover:bg-gray-50 transition-colors"
                           onClick={() => {
-                            setSelectedApplication(app);
-                            setShowApplicationDialog(true);
+                            router.push(`/admin/application/${app.id}`);
                           }}
                         >
-                          <TableCell>
+                          <TableCell className="font-medium">
                             {app.first_name} {app.last_name}
                           </TableCell>
                           <TableCell>{app.job_title || '-'}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
                               <span>{app.email}</span>
-                              <span className="text-sm text-muted-foreground">{app.phone}</span>
+                              <span className="text-sm text-gray-500">{app.phone}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <Badge
                               variant={
                                 app.status === 'approved' 
-                                  ? 'success' 
+                                  ? 'default' 
                                   : app.status === 'rejected' 
                                   ? 'destructive' 
                                   : 'secondary'
                               }
+                              className={app.status === 'approved' ? "bg-green-500 hover:bg-green-600 text-white" : ""}
                             >
+                              {app.status === 'approved' && <CheckCircle className="h-3 w-3 mr-1" />}
+                              {app.status === 'rejected' && <XCircle className="h-3 w-3 mr-1" />}
                               {app.status}
                             </Badge>
                           </TableCell>
@@ -513,10 +848,10 @@ export default function AdminPage() {
                                 href={app.resume_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-primary hover:underline"
+                                className="inline-flex items-center gap-1 text-red-600 hover:text-red-800 hover:underline"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                View <ExternalLinkIcon className="h-4 w-4" />
+                                <FileText className="h-4 w-4" /> View
                               </a>
                             )}
                           </TableCell>
@@ -527,7 +862,9 @@ export default function AdminPage() {
                                 size="sm"
                                 onClick={() => updateStatus(app.id, 'approved')}
                                 disabled={app.status === 'approved'}
+                                className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
                               >
+                                <CheckCircle className="h-3.5 w-3.5 mr-1" />
                                 Approve
                               </Button>
                               <Button
@@ -535,7 +872,9 @@ export default function AdminPage() {
                                 size="sm"
                                 onClick={() => updateStatus(app.id, 'rejected')}
                                 disabled={app.status === 'rejected'}
+                                className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
                               >
+                                <XCircle className="h-3.5 w-3.5 mr-1" />
                                 Reject
                               </Button>
                             </div>
@@ -550,11 +889,13 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="jobs">
-            <Card>
-              <CardHeader className="pb-4">
+            <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
+              <CardHeader className="bg-white pb-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Briefcase className="h-6 w-6" />
+                    <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <Briefcase className="h-4 w-4 text-red-600" />
+                    </div>
                     <CardTitle>Job Listings</CardTitle>
                   </div>
                   <Dialog open={showJobDialog} onOpenChange={setShowJobDialog}>
@@ -564,183 +905,19 @@ export default function AdminPage() {
                           setEditingJob(null);
                           setShowJobDialog(true);
                         }}
+                        className="bg-red-600 hover:bg-red-700 text-white"
                       >
                         <PlusIcon className="h-4 w-4 mr-2" />
                         Add Job
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>
-                          {editingJob ? 'Edit Job Listing' : 'Create Job Listing'}
-                        </DialogTitle>
-                      </DialogHeader>
-                      <Form {...jobForm}>
-                        <form onSubmit={jobForm.handleSubmit(onJobSubmit)} className="space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                              control={jobForm.control}
-                              name="title"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Job Title</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={jobForm.control}
-                              name="department"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Department</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                              control={jobForm.control}
-                              name="location"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Location</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={jobForm.control}
-                              name="type"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Job Type</FormLabel>
-                                  <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                  >
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select job type" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="Full-time">Full-time</SelectItem>
-                                      <SelectItem value="Part-time">Part-time</SelectItem>
-                                      <SelectItem value="Contract">Contract</SelectItem>
-                                      <SelectItem value="Internship">Internship</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-
-                          <FormField
-                            control={jobForm.control}
-                            name="salary_range"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Salary Range (Optional)</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={jobForm.control}
-                            name="description"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job Description</FormLabel>
-                                <FormControl>
-                                  <Textarea
-                                    {...field}
-                                    className="min-h-[100px]"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={jobForm.control}
-                            name="requirements"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Requirements</FormLabel>
-                                <FormControl>
-                                  <Textarea
-                                    {...field}
-                                    className="min-h-[100px]"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={jobForm.control}
-                            name="active"
-                            render={({ field }) => (
-                              <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                  <FormLabel className="text-base">
-                                    Active Listing
-                                  </FormLabel>
-                                  <div className="text-sm text-muted-foreground">
-                                    This job will be visible to applicants
-                                  </div>
-                                </div>
-                                <FormControl>
-                                  <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-
-                          <DialogFooter>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => setShowJobDialog(false)}
-                            >
-                              Cancel
-                            </Button>
-                            <Button type="submit">
-                              {editingJob ? 'Update' : 'Create'} Job
-                            </Button>
-                          </DialogFooter>
-                        </form>
-                      </Form>
-                    </DialogContent>
                   </Dialog>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
+              <CardContent className="p-0">
+                <div className="rounded-md">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-gray-50">
                       <TableRow>
                         <TableHead>Title</TableHead>
                         <TableHead>Department</TableHead>
@@ -752,9 +929,9 @@ export default function AdminPage() {
                     </TableHeader>
                     <TableBody>
                       {jobs.map((job) => (
-                        <TableRow key={job.id}>
-                          <TableCell>
-                            <Link href={'/jobs?job=' + job.id} className="text-primary hover:underline">
+                        <TableRow key={job.id} className="hover:bg-gray-50 transition-colors">
+                          <TableCell className="font-medium">
+                            <Link href={'/application?job=' + job.id} className="text-red-600 hover:text-red-800 hover:underline">
                               {job.title}
                             </Link>
                           </TableCell>
@@ -763,8 +940,10 @@ export default function AdminPage() {
                           <TableCell>{job.type}</TableCell>
                           <TableCell>
                             <Badge
-                              variant={job.active ? "success" : "secondary"}
+                              variant={job.active ? "default" : "secondary"}
+                              className={job.active ? "bg-green-500 hover:bg-green-600 text-white" : ""}
                             >
+                              {job.active && <CheckCircle className="h-3 w-3 mr-1" />}
                               {job.active ? "Active" : "Inactive"}
                             </Badge>
                           </TableCell>
@@ -777,13 +956,15 @@ export default function AdminPage() {
                                   setEditingJob(job);
                                   setShowJobDialog(true);
                                 }}
+                                className="border-gray-200 hover:bg-gray-50"
                               >
-                                <Pencil className="h-4 w-4" />
+                                <Pencil className="h-4 w-4 text-gray-600" />
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => deleteJob(job.id)}
+                                className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -798,13 +979,145 @@ export default function AdminPage() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="stores" className="space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">Store Management</h2>
+                <p className="text-gray-500">Manage store locations and details</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search stores..."
+                    className="pl-9 w-full md:w-[250px]"
+                    value={storeSearchQuery}
+                    onChange={(e) => setStoreSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Button 
+                  onClick={() => {
+                    console.log("Add Store button clicked");
+                    addNewStore();
+                  }} 
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Add Store
+                </Button>
+              </div>
+            </div>
+
+            <Card className="overflow-hidden border-0 shadow-md">
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader className="bg-gray-50">
+                    <TableRow>
+                      <TableHead className="font-semibold">Store Name</TableHead>
+                      <TableHead className="font-semibold">Location</TableHead>
+                      <TableHead className="font-semibold">Contact</TableHead>
+                      <TableHead className="font-semibold">Status</TableHead>
+                      <TableHead className="font-semibold text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredStores.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                          {storeSearchQuery
+                            ? "No stores found matching your search."
+                            : "No stores have been added yet."}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredStores.map((store) => (
+                        <TableRow key={store.id} className="hover:bg-gray-50">
+                          <TableCell className="font-medium">{store.name}</TableCell>
+                          <TableCell>
+                            <div className="flex items-start gap-2">
+                              <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+                              <div>
+                                <p className="text-sm">{store.address}</p>
+                                <p className="text-xs text-gray-500">
+                                  {store.city}, {store.state} {store.zip_code}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {store.phone && (
+                              <div className="flex items-center gap-2 mb-1">
+                                <Phone className="h-3 w-3 text-gray-400" />
+                                <span className="text-sm">{store.phone}</span>
+                              </div>
+                            )}
+                            {store.email && (
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-3 w-3 text-gray-400" />
+                                <span className="text-sm">{store.email}</span>
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={store.active ? "default" : "outline"}
+                              className={
+                                store.active
+                                  ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                  : "text-gray-500"
+                              }
+                            >
+                              {store.active ? "Active" : "Inactive"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => editStore(store)}
+                                className="h-8 w-8"
+                              >
+                                <Pencil className="h-4 w-4" />
+                                <span className="sr-only">Edit</span>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  if (
+                                    window.confirm(
+                                      `Are you sure you want to delete ${store.name}?`
+                                    )
+                                  ) {
+                                    deleteStore(store.id);
+                                  }
+                                }}
+                                className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                <span className="sr-only">Delete</span>
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="users">
-            <Card>
-              <CardHeader className="pb-4">
+            <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
+              <CardHeader className="bg-white pb-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Users className="h-6 w-6" />
-                    <CardTitle>Admin Users</CardTitle>
+                    <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <Users className="h-4 w-4 text-red-600" />
+                    </div>
+                    <CardTitle>Users</CardTitle>
                   </div>
                   <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
                     <DialogTrigger asChild>
@@ -813,67 +1126,19 @@ export default function AdminPage() {
                           setEditingUser(null);
                           setShowUserDialog(true);
                         }}
+                        className="bg-red-600 hover:bg-red-700 text-white"
                       >
                         <PlusIcon className="h-4 w-4 mr-2" />
                         Add User
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>
-                          {editingUser ? 'Edit User' : 'Create User'}
-                        </DialogTitle>
-                      </DialogHeader>
-                      <Form {...userForm}>
-                        <form onSubmit={userForm.handleSubmit(onUserSubmit)} className="space-y-4">
-                          <FormField
-                            control={userForm.control}
-                            name="username"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Username</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={userForm.control}
-                            name="password"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                  <Input type="password" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <DialogFooter>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => setShowUserDialog(false)}
-                            >
-                              Cancel
-                            </Button>
-                            <Button type="submit">
-                              {editingUser ? 'Update' : 'Create'} User
-                            </Button>
-                          </DialogFooter>
-                        </form>
-                      </Form>
-                    </DialogContent>
                   </Dialog>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
+              <CardContent className="p-0">
+                <div className="rounded-md">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-gray-50">
                       <TableRow>
                         <TableHead>Username</TableHead>
                         <TableHead>Created At</TableHead>
@@ -882,8 +1147,8 @@ export default function AdminPage() {
                     </TableHeader>
                     <TableBody>
                       {users.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell>{user.username}</TableCell>
+                        <TableRow key={user.id} className="hover:bg-gray-50 transition-colors">
+                          <TableCell className="font-medium">{user.username}</TableCell>
                           <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
                           <TableCell>
                             <div className="flex gap-2">
@@ -894,13 +1159,15 @@ export default function AdminPage() {
                                   setEditingUser(user);
                                   setShowUserDialog(true);
                                 }}
+                                className="border-gray-200 hover:bg-gray-50"
                               >
-                                <Pencil className="h-4 w-4" />
+                                <Pencil className="h-4 w-4 text-gray-600" />
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => deleteUser(user.id)}
+                                className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -916,6 +1183,473 @@ export default function AdminPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </>
+
+      {/* Job Dialog */}
+      <Dialog open={showJobDialog} onOpenChange={setShowJobDialog}>
+        <DialogContent className="sm:max-w-[600px] z-[100]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingJob ? "Edit Job" : "Add New Job"}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...jobForm}>
+            <form
+              onSubmit={jobForm.handleSubmit(onJobSubmit)}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={jobForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Job Title*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter job title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={jobForm.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter department" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={jobForm.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter location" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={jobForm.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Job Type*</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select job type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Full-time">Full-time</SelectItem>
+                          <SelectItem value="Part-time">Part-time</SelectItem>
+                          <SelectItem value="Contract">Contract</SelectItem>
+                          <SelectItem value="Temporary">Temporary</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={jobForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description*</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter job description"
+                        className="resize-none min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={jobForm.control}
+                name="requirements"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Requirements*</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter job requirements"
+                        className="resize-none min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={jobForm.control}
+                name="salary_range"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Salary Range</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. $50,000 - $70,000" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={jobForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Active Status</FormLabel>
+                      <FormDescription>
+                        Set whether this job is currently active
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white">
+                  {editingJob ? "Update Job" : "Add Job"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* User Dialog */}
+      <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
+        <DialogContent className="sm:max-w-[500px] z-[100]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingUser ? "Edit User" : "Add New User"}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...userForm}>
+            <form
+              onSubmit={userForm.handleSubmit(onUserSubmit)}
+              className="space-y-6"
+            >
+              <FormField
+                control={userForm.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={userForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password*</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="password" 
+                        placeholder="Enter password" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white">
+                  {editingUser ? "Update User" : "Add User"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Store Dialog */}
+      <Dialog open={storeDialogOpen} onOpenChange={handleDialogChange}>
+        <DialogContent className="sm:max-w-[600px] z-[100]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedStore ? "Edit Store" : "Add New Store"}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...storeForm}>
+            <div className="space-y-6">
+              {selectedStore && (
+                <FormField
+                  control={storeForm.control}
+                  name="id"
+                  render={({ field }) => (
+                    <FormItem className="hidden">
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={storeForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Store Name*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter store name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={storeForm.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter street address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={storeForm.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter city" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={storeForm.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>State*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter state" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={storeForm.control}
+                  name="zip_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ZIP Code*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter ZIP code" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={storeForm.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter phone number" {...field} value={field.value || ""} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={storeForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter email address" {...field} value={field.value || ""} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={storeForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter store description"
+                        className="resize-none min-h-[100px]"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={storeForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Active Status</FormLabel>
+                      <FormDescription>
+                        Set whether this store is currently active
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button 
+                    type="button" 
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    onClick={() => {
+                      console.log("Submit button clicked manually");
+                      storeForm.handleSubmit((values) => {
+                        onStoreSubmit(values);
+                      })();
+                    }}
+                  >
+                    {selectedStore ? "Update Store" : "Add Store"}
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </div>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Direct test button and Test Dialog */}
+      <div className="fixed bottom-4 right-4 space-y-2">
+        <Button 
+          onClick={() => {
+            console.log("Direct test button clicked");
+            setStoreDialogOpen(true);
+          }}
+          className="bg-green-600 hover:bg-green-700 text-white w-full"
+        >
+          Open Store Dialog Directly
+        </Button>
+        
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full">
+              Test Dialog
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Test Dialog</DialogTitle>
+            </DialogHeader>
+            <p>This is a test dialog to check if the Dialog component is working properly.</p>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button>Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
   );
 }

@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
 import { Language, translations } from "@/lib/translations";
+import { EnhancedFormField } from "./enhanced-form-field";
+import { Mail, Phone, User, MapPin, Home, Building, Hash } from "lucide-react";
 
 const localTranslations: Record<Language, { [key: string]: string }> = {
   en: {
@@ -85,137 +87,98 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
   return (
     <div className="space-y-6">
       {/* Name */}
-      <div className="grid grid-cols-2 gap-4">
-        <FormField
-          control={form.control}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <EnhancedFormField
+          form={form}
           name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t.firstName}</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t.firstName}
+          placeholder={language === "en" ? "Enter your first name" : "Ingrese su nombre"}
+          icon={<User className="h-4 w-4" />}
+          required
+          showInputStatusMessage={false}
         />
-        <FormField
-          control={form.control}
+        <EnhancedFormField
+          form={form}
           name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t.lastName}</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t.lastName}
+          placeholder={language === "en" ? "Enter your last name" : "Ingrese su apellido"}
+          icon={<User className="h-4 w-4" />}
+          required
+          showInputStatusMessage={false}
         />
       </div>
 
       {/* Contact */}
-      <div className="grid grid-cols-2 gap-4">
-        <FormField
-          control={form.control}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <EnhancedFormField
+          form={form}
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t.email}</FormLabel>
-              <FormControl>
-                <Input type="email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t.email}
+          type="email"
+          placeholder={language === "en" ? "your.email@example.com" : "su.correo@ejemplo.com"}
+          icon={<Mail className="h-4 w-4" />}
+          required
+          showInputStatusMessage={false}
         />
-        <FormField
-          control={form.control}
+        <EnhancedFormField
+          form={form}
           name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t.phone}</FormLabel>
-              <FormControl>
-                <Input
-                  type="tel"
-                  {...field}
-                  onChange={(e) => {
-                    const value = e.target.value
-                      .replace(/\D/g, "")
-                      .slice(0, 10);
-                    field.onChange(value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t.phone}
+          type="tel"
+          placeholder={language === "en" ? "1234567890" : "1234567890"}
+          icon={<Phone className="h-4 w-4" />}
+          required
+          showInputStatusMessage={false}
         />
       </div>
 
       {/* Address */}
       <div className="space-y-4">
-        <FormField
-          control={form.control}
+        <EnhancedFormField
+          form={form}
           name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t.address}</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t.address}
+          placeholder={language === "en" ? "Enter your street address" : "Ingrese su dirección"}
+          icon={<Home className="h-4 w-4" />}
+          required
+          showInputStatusMessage={false}
         />
-        <div className="grid grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <EnhancedFormField
+            form={form}
             name="city"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t.city}</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t.city}
+            placeholder={language === "en" ? "City" : "Ciudad"}
+            icon={<Building className="h-4 w-4" />}
+            required
+            showInputStatusMessage={false}
           />
-          <FormField
-            control={form.control}
+          <EnhancedFormField
+            form={form}
             name="state"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t.state}</FormLabel>
-                <FormControl>
-                  <Input {...field} maxLength={2} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t.state}
+            placeholder={language === "en" ? "State" : "Estado"}
+            icon={<MapPin className="h-4 w-4" />}
+            required
+            showInputStatusMessage={false}
           />
-          <FormField
-            control={form.control}
+          <EnhancedFormField
+            form={form}
             name="zipCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t.zipCode}</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t.zipCode}
+            placeholder={language === "en" ? "12345" : "12345"}
+            icon={<Hash className="h-4 w-4" />}
+            required
+            showInputStatusMessage={false}
           />
         </div>
       </div>
 
       {/* Employment Eligibility */}
-      <div className="space-y-4 p-4 border rounded-lg">
-        <h3 className="font-semibold">{t.employmentEligibility}</h3>
+      <div className="space-y-4 p-6 border rounded-lg bg-gray-50/50 shadow-sm transition-all duration-300 hover:shadow-md">
+        <h3 className="font-semibold text-lg text-gray-800">{t.employmentEligibility}</h3>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="isUnder18"
@@ -230,11 +193,11 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="isUnder18-yes" />
-                      <FormLabel htmlFor="isUnder18-yes">{t.yes}</FormLabel>
+                      <FormLabel htmlFor="isUnder18-yes" className="cursor-pointer">{t.yes}</FormLabel>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="isUnder18-no" />
-                      <FormLabel htmlFor="isUnder18-no">{t.no}</FormLabel>
+                      <FormLabel htmlFor="isUnder18-no" className="cursor-pointer">{t.no}</FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -257,11 +220,11 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="hasWorkPermit-yes" />
-                      <FormLabel htmlFor="hasWorkPermit-yes">{t.yes}</FormLabel>
+                      <FormLabel htmlFor="hasWorkPermit-yes" className="cursor-pointer">{t.yes}</FormLabel>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="hasWorkPermit-no" />
-                      <FormLabel htmlFor="hasWorkPermit-no">{t.no}</FormLabel>
+                      <FormLabel htmlFor="hasWorkPermit-no" className="cursor-pointer">{t.no}</FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -271,7 +234,7 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="isEligibleToWork"
@@ -286,15 +249,11 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="isEligibleToWork-yes" />
-                      <FormLabel htmlFor="isEligibleToWork-yes">
-                        {t.yes}
-                      </FormLabel>
+                      <FormLabel htmlFor="isEligibleToWork-yes" className="cursor-pointer">{t.yes}</FormLabel>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="isEligibleToWork-no" />
-                      <FormLabel htmlFor="isEligibleToWork-no">
-                        {t.no}
-                      </FormLabel>
+                      <FormLabel htmlFor="isEligibleToWork-no" className="cursor-pointer">{t.no}</FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -317,13 +276,11 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="canProvideProof-yes" />
-                      <FormLabel htmlFor="canProvideProof-yes">
-                        {t.yes}
-                      </FormLabel>
+                      <FormLabel htmlFor="canProvideProof-yes" className="cursor-pointer">{t.yes}</FormLabel>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="canProvideProof-no" />
-                      <FormLabel htmlFor="canProvideProof-no">{t.no}</FormLabel>
+                      <FormLabel htmlFor="canProvideProof-no" className="cursor-pointer">{t.no}</FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -333,7 +290,7 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="hasFelony"
@@ -348,11 +305,11 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="hasFelony-yes" />
-                      <FormLabel htmlFor="hasFelony-yes">{t.yes}</FormLabel>
+                      <FormLabel htmlFor="hasFelony-yes" className="cursor-pointer">{t.yes}</FormLabel>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="hasFelony-no" />
-                      <FormLabel htmlFor="hasFelony-no">{t.no}</FormLabel>
+                      <FormLabel htmlFor="hasFelony-no" className="cursor-pointer">{t.no}</FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -375,15 +332,11 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="previouslyEmployed-yes" />
-                      <FormLabel htmlFor="previouslyEmployed-yes">
-                        {t.yes}
-                      </FormLabel>
+                      <FormLabel htmlFor="previouslyEmployed-yes" className="cursor-pointer">{t.yes}</FormLabel>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="previouslyEmployed-no" />
-                      <FormLabel htmlFor="previouslyEmployed-no">
-                        {t.no}
-                      </FormLabel>
+                      <FormLabel htmlFor="previouslyEmployed-no" className="cursor-pointer">{t.no}</FormLabel>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -392,48 +345,41 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
             )}
           />
         </div>
-
-        {watchPreviouslyEmployed === "yes" && (
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <FormField
-              control={form.control}
-              name="previousEmployment.location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.location}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="previousEmployment.position"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t.position}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        )}
       </div>
 
-      {/* Employment Type */}
-      <div className="space-y-4 p-4 border rounded-lg">
-        <h3 className="font-semibold">{t.employmentType}</h3>
+      {/* Previous Employment */}
+      {watchPreviouslyEmployed === "yes" && (
+        <div className="p-4 border rounded-lg animate-in fade-in slide-in-from-top-4 duration-300">
+          <h3 className="font-semibold mb-4">{t.previouslyEmployed}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EnhancedFormField
+              form={form}
+              name="previousEmployment.location"
+              label={t.location}
+              placeholder={language === "en" ? "Location" : "Ubicación"}
+              icon={<MapPin className="h-4 w-4" />}
+              showInputStatusMessage={false}
+            />
+            <EnhancedFormField
+              form={form}
+              name="previousEmployment.position"
+              label={t.position}
+              placeholder={language === "en" ? "Position" : "Posición"}
+              icon={<Building className="h-4 w-4" />}
+              showInputStatusMessage={false}
+            />
+          </div>
+        </div>
+      )}
 
+      {/* Employment Type */}
+      <div className="space-y-2">
         <FormField
           control={form.control}
           name="employmentType"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>{t.employmentType}</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -441,16 +387,16 @@ export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
                   className="flex flex-col space-y-1"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Full Time" id="full-time" />
-                    <FormLabel htmlFor="full-time">{t.fullTime}</FormLabel>
+                    <RadioGroupItem value="Full Time" id="employmentType-fullTime" />
+                    <FormLabel htmlFor="employmentType-fullTime" className="cursor-pointer">{t.fullTime}</FormLabel>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Part Time" id="part-time" />
-                    <FormLabel htmlFor="part-time">{t.partTime}</FormLabel>
+                    <RadioGroupItem value="Part Time" id="employmentType-partTime" />
+                    <FormLabel htmlFor="employmentType-partTime" className="cursor-pointer">{t.partTime}</FormLabel>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Temporary" id="temporary" />
-                    <FormLabel htmlFor="temporary">{t.temporary}</FormLabel>
+                    <RadioGroupItem value="Temporary" id="employmentType-temporary" />
+                    <FormLabel htmlFor="employmentType-temporary" className="cursor-pointer">{t.temporary}</FormLabel>
                   </div>
                 </RadioGroup>
               </FormControl>

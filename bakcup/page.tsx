@@ -111,14 +111,16 @@ export default function JobsPage() {
         <div className="absolute top-[10%] right-[5%] w-32 h-32 bg-contain bg-no-repeat bg-center opacity-20 produce-apple animate-float-slow"></div>
         <div className="absolute bottom-[15%] left-[8%] w-28 h-28 bg-contain bg-no-repeat bg-center opacity-15 produce-carrot animate-float-slow-reverse"></div>
         <div className="absolute top-[40%] right-[15%] w-24 h-24 bg-contain bg-no-repeat bg-center opacity-15 produce-broccoli animate-float-medium"></div>
-        <div className="absolute bottom-[25%] right-[40%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-20 produce-orange animate-float-medium-reverse"></div>
+        <div className="absolute bottom-[25%] right-[20%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-20 produce-orange animate-float-medium-reverse"></div>
         
         {/* Additional Produce Elements - Positioned to avoid text overlap */}
         <div className="absolute top-[15%] left-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-tomato animate-float-medium"></div>
         <div className="absolute top-[60%] right-[8%] w-24 h-24 bg-contain bg-no-repeat bg-center opacity-15 produce-banana animate-float-slow"></div>
         <div className="absolute bottom-[40%] left-[15%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-grapes animate-float-medium-reverse"></div>
+        <div className="absolute top-[30%] left-[20%] w-18 h-18 bg-contain bg-no-repeat bg-center opacity-15 produce-pepper animate-float-slow-reverse"></div>
         <div className="absolute bottom-[10%] right-[35%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-strawberry animate-float-medium"></div>
-        <div className="absolute top-[5%] right-[21%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-corn animate-float-medium-reverse"></div>
+        <div className="absolute top-[75%] left-[30%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-lettuce animate-float-slow"></div>
+        <div className="absolute top-[5%] right-[25%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-corn animate-float-medium-reverse"></div>
 
         {/* Content Container */}
         <div className="container mx-auto relative z-10">
@@ -135,7 +137,7 @@ export default function JobsPage() {
                 <span className="text-primary">Gala Foods</span>
               </h1>
 
-              <p className="mt-6 text-xl text-gray-600 max-w-2xl lg:max-w-none mx-auto lg:mx-0 bg-white/90 p-3 rounded-lg shadow-sm">
+              <p className="mt-6 text-xl text-gray-600 max-w-2xl lg:max-w-none mx-auto lg:mx-0">
                 Be part of a dynamic team dedicated to providing <span className="text-green-600 font-medium">fresh quality food</span> and exceptional service to our community.
               </p>
 
@@ -163,9 +165,9 @@ export default function JobsPage() {
 
               {/* General Application Button */}
               <div className="mt-12 flex justify-center lg:justify-start">
-                <Link href="/application">
+                <Link href="/">
                   <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
-                    Apply Now
+                    Submit General Application
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -210,7 +212,9 @@ export default function JobsPage() {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23955ba5' cx='40' cy='50' r='10'/%3E%3Ccircle fill='%23955ba5' cx='60' cy='50' r='10'/%3E%3Ccircle fill='%23955ba5' cx='50' cy='35' r='10'/%3E%3Ccircle fill='%23955ba5' cx='50' cy='65' r='10'/%3E%3Ccircle fill='%23955ba5' cx='35' cy='65' r='10'/%3E%3Ccircle fill='%23955ba5' cx='65' cy='65' r='10'/%3E%3Cpath fill='%23599044' d='M50,25c0,0,0-15,5-15s5,5,5,5S55,20,50,25z'/%3E%3C/svg%3E");
         }
         
-       
+        .produce-pepper {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e73c3e' d='M40,30c-5,0-10,5-10,10c0,20,15,40,15,40s15-20,15-40c0-5-5-10-10-10H40z'/%3E%3Cpath fill='%23599044' d='M50,30c0,0,0-10,0-15s-5-5-5-5s-5,0-5,5s0,15,0,15H50z'/%3E%3C/svg%3E");
+        }
         
         .produce-strawberry {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e73c3e' d='M50,30c-15,0-25,10-25,30c0,20,25,30,25,30s25-10,25-30C75,40,65,30,50,30z'/%3E%3Ccircle fill='%23ffffff' cx='40' cy='45' r='3'/%3E%3Ccircle fill='%23ffffff' cx='60' cy='45' r='3'/%3E%3Ccircle fill='%23ffffff' cx='50' cy='60' r='3'/%3E%3Ccircle fill='%23ffffff' cx='35' cy='60' r='3'/%3E%3Ccircle fill='%23ffffff' cx='65' cy='60' r='3'/%3E%3Ccircle fill='%23ffffff' cx='42' cy='75' r='3'/%3E%3Ccircle fill='%23ffffff' cx='58' cy='75' r='3'/%3E%3Cpath fill='%23599044' d='M50,30c0,0,5-10,0-15c-5-5-10,0-10,0s5,5,10,15z'/%3E%3C/svg%3E");
@@ -261,8 +265,48 @@ export default function JobsPage() {
         }
       `}</style>
       
-      {/* Job Listings Section with Search and Filters */}
+      {/* Why Work With Us Section - Enhanced */}
       <div className="max-w-7xl mx-auto py-20 px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 relative inline-block">
+            Why Work With Us?
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-primary rounded-full"></div>
+          </h2>
+          <p className="mt-8 text-lg text-gray-600 max-w-3xl mx-auto">
+            At Gala Foods, we believe in creating an environment where our
+            employees can thrive. We offer competitive benefits, opportunities
+            for advancement, and a supportive work culture.
+          </p>
+        </div>
+
+        {/* Benefits Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-primary/20 flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <HeartIcon className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Health & Wellness</h3>
+            <p className="text-gray-600">Comprehensive health insurance, wellness programs, and mental health support for you and your family.</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-primary/20 flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
+              <StarIcon className="h-8 w-8 text-blue-500" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Career Development</h3>
+            <p className="text-gray-600">Training programs, tuition assistance, and clear pathways for advancement within our organization.</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-primary/20 flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4">
+              <UsersIcon className="h-8 w-8 text-indigo-500" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Inclusive Culture</h3>
+            <p className="text-gray-600">A diverse and inclusive workplace where all employees feel valued, respected, and empowered to contribute.</p>
+          </div>
+        </div>
+
+        {/* Job Listings Section with Search and Filters */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
             <div className="flex items-center gap-3">
@@ -379,7 +423,7 @@ export default function JobsPage() {
                     </div>
                     
                     <div className="w-[150px] flex-shrink-0 flex items-center justify-center p-4">
-                      <Link href={`/application?job=${job.id}`} className="block w-full">
+                      <Link href={`/?job=${job.id}`} className="block w-full">
                         <Button 
                           size="sm" 
                           className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300 w-full px-2 py-2 h-auto"
@@ -429,48 +473,6 @@ export default function JobsPage() {
           </div>
         </div>
       </div>
-      
-      {/* Why Work With Us Section - Enhanced */}
-      <div className="max-w-7xl mx-auto py-20 px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 relative inline-block">
-            Why Work With Us?
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-primary rounded-full"></div>
-          </h2>
-          <p className="mt-8 text-lg text-gray-600 max-w-3xl mx-auto">
-            At Gala Foods, we believe in creating an environment where our
-            employees can thrive. We offer competitive benefits, opportunities
-            for advancement, and a supportive work culture.
-          </p>
-        </div>
-
-        {/* Benefits Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-primary/20 flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <HeartIcon className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold mb-3">Health & Wellness</h3>
-            <p className="text-gray-600">Comprehensive health insurance, wellness programs, and mental health support for you and your family.</p>
-          </div>
-          
-          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-primary/20 flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
-              <StarIcon className="h-8 w-8 text-blue-500" />
-            </div>
-            <h3 className="text-xl font-semibold mb-3">Career Development</h3>
-            <p className="text-gray-600">Training programs, tuition assistance, and clear pathways for advancement within our organization.</p>
-          </div>
-          
-          <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-primary/20 flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4">
-              <UsersIcon className="h-8 w-8 text-indigo-500" />
-            </div>
-            <h3 className="text-xl font-semibold mb-3">Inclusive Culture</h3>
-            <p className="text-gray-600">A diverse and inclusive workplace where all employees feel valued, respected, and empowered to contribute.</p>
-          </div>
-        </div>
-      </div>
 
       {/* CTA Section - New */}
       <div className="bg-gradient-to-r from-primary/10 to-blue-500/10 py-16 mt-20">
@@ -485,7 +487,7 @@ export default function JobsPage() {
               </p>
             </div>
             <div className="flex-shrink-0">
-              <Link href="/application">
+              <Link href="/">
                 <Button size="lg" className="text-lg px-8 py-6 bg-[#599044] hover:bg-[#599044]/90 shadow-lg hover:shadow-[#599044]/20 transition-all duration-300">
                   Submit General Application
                   <ArrowRight className="ml-2 h-5 w-5" />

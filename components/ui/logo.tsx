@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <Link href="/jobs" className={`block ${className}`}>
+    <Link href="/" className={`block ${className}`}>
       <div className="relative aspect-[2/1]">
         <Image
           src="/images/gala-foods-logo.png"
