@@ -108,17 +108,21 @@ export default function JobsPage() {
         </div>
         
         {/* Decorative Produce Elements */}
-        <div className="absolute top-[10%] right-[5%] w-32 h-32 bg-contain bg-no-repeat bg-center opacity-20 produce-apple animate-float-slow"></div>
+        <div className="absolute top-[10%] right-[5%] w-32 h-32 bg-contain bg-no-repeat bg-center opacity-15 produce-apple animate-float-slow"></div>
         <div className="absolute bottom-[15%] left-[8%] w-28 h-28 bg-contain bg-no-repeat bg-center opacity-15 produce-carrot animate-float-slow-reverse"></div>
         <div className="absolute top-[40%] right-[15%] w-24 h-24 bg-contain bg-no-repeat bg-center opacity-15 produce-broccoli animate-float-medium"></div>
-        <div className="absolute bottom-[25%] right-[40%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-20 produce-orange animate-float-medium-reverse"></div>
+        <div className="absolute bottom-[2%] right-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-orange animate-float-medium-reverse"></div>
         
         {/* Additional Produce Elements - Positioned to avoid text overlap */}
         <div className="absolute top-[15%] left-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-tomato animate-float-medium"></div>
         <div className="absolute top-[60%] right-[8%] w-24 h-24 bg-contain bg-no-repeat bg-center opacity-15 produce-banana animate-float-slow"></div>
         <div className="absolute bottom-[40%] left-[15%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-grapes animate-float-medium-reverse"></div>
-        <div className="absolute bottom-[10%] right-[35%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-strawberry animate-float-medium"></div>
-        <div className="absolute top-[5%] right-[21%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-corn animate-float-medium-reverse"></div>
+        <div className="absolute bottom-[12%] right-[21%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-strawberry animate-float-medium"></div>
+        <div className="absolute top-[5%] right-[16%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-corn animate-float-medium-reverse"></div>
+
+        {/* New Produce Elements */}
+        <div className="absolute top-[8%] left-[20%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-avocado animate-float-slow-reverse"></div>
+        <div className="absolute bottom-[45%] right-[5%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-cucumber animate-float-medium-reverse"></div>
 
         {/* Content Container */}
         <div className="container mx-auto relative z-10">
@@ -130,7 +134,7 @@ export default function JobsPage() {
 
             {/* Content Area */}
             <div className="flex-1 text-center lg:text-left lg:pl-12 xl:pl-16">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl bg-white/90 inline-block px-6 py-3 rounded-lg shadow-sm backdrop-blur-sm">
                 Join Our Team at{" "}
                 <span className="text-primary">Gala Foods</span>
               </h1>
@@ -222,6 +226,39 @@ export default function JobsPage() {
         
         .produce-corn {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23f8b042' d='M40,20c-5,0-10,5-10,10v40c0,5,5,10,10,10h20c5,0,10-5,10-10V30c0-5-5-10-10-10H40z'/%3E%3Cpath fill='%23ffffff' d='M45,25c-2.5,0-5,2.5-5,5v40c0,2.5,2.5,5,5,5s5-2.5,5-5V30c0-2.5-2.5-5-5-5z'/%3E%3Cpath fill='%23ffffff' d='M55,25c-2.5,0-5,2.5-5,5v40c0,2.5,2.5,5,5,5s5-2.5,5-5V30c0-2.5-2.5-5-5-5z'/%3E%3Cpath fill='%23599044' d='M50,20c0,0,0-10,5-10s5,5,5,5S55,20,50,20z'/%3E%3C/svg%3E");
+        }
+        
+        /* New Produce SVGs */
+        .produce-pear {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23a4c64e' d='M50,85c-15,0-25-15-25-35c0-10,5-20,10-25c5-5,10-5,15-5s10,0,15,5c5,5,10,15,10,25C75,70,65,85,50,85z'/%3E%3Cpath fill='%23599044' d='M50,20c0,0,0-10,5-10s5,5,5,5c0,0-5,5-10,5z'/%3E%3C/svg%3E");
+        }
+        
+        .produce-watermelon {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e73c3e' d='M85,85c-20,20-50,20-70,0s-20-50,0-70L85,85z'/%3E%3Cpath fill='%23ffffff' d='M75,75c-15,15-35,15-50,0s-15-35,0-50L75,75z'/%3E%3Cpath fill='%23599044' d='M15,15L5,5c0,0,10-5,15,0S15,15,15,15z'/%3E%3Ccircle fill='%23333333' cx='30' cy='50' r='3'/%3E%3Ccircle fill='%23333333' cx='45' cy='65' r='3'/%3E%3Ccircle fill='%23333333' cx='60' cy='50' r='3'/%3E%3Ccircle fill='%23333333' cx='45' cy='35' r='3'/%3E%3C/svg%3E");
+        }
+        
+        .produce-bell-pepper {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e73c3e' d='M50,20c-15,0-25,10-25,25c0,15,5,35,25,35s25-20,25-35C75,30,65,20,50,20z'/%3E%3Cpath fill='%23599044' d='M50,20c0,0,0-10,5-10s5,5,5,5S55,20,50,20z'/%3E%3Cpath fill='%23599044' d='M50,20c0,0,0-10-5-10s-5,5-5,5S45,20,50,20z'/%3E%3C/svg%3E");
+        }
+        
+        .produce-avocado {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23599044' d='M50,85c-15,0-25-15-25-35s10-35,25-35s25,15,25,35S65,85,50,85z'/%3E%3Ccircle fill='%23a67c52' cx='50' cy='50' r='15'/%3E%3Ccircle fill='%23ffffff' cx='50' cy='50' r='5'/%3E%3C/svg%3E");
+        }
+        
+        .produce-pineapple {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23f8b042' d='M50,30c-10,0-20,5-20,20v30c0,5,10,10,20,10s20-5,20-10V50C70,35,60,30,50,30z'/%3E%3Cpath fill='%23a67c52' d='M50,30c0,0,0-5,5-5s5,5,5,5H50z'/%3E%3Cpath fill='%23a67c52' d='M50,30c0,0,0-5-5-5s-5,5-5,5H50z'/%3E%3Cpath fill='%23599044' d='M50,30c0,0,0-10,5-10s5-5,0-10s-10,5-5,10S50,30,50,30z'/%3E%3Cpath fill='%23599044' d='M50,30c0,0,0-10-5-10s-5-5,0-10s10,5,5,10S50,30,50,30z'/%3E%3C/svg%3E");
+        }
+        
+        .produce-eggplant {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23955ba5' d='M40,30c-5,0-10,5-10,15c0,20,10,35,20,35s20-15,20-35c0-10-5-15-10-15H40z'/%3E%3Cpath fill='%23599044' d='M50,30c0,0,0-10,5-10s5,5,5,5S55,30,50,30z'/%3E%3Cpath fill='%23599044' d='M50,30c0,0,0-10-5-10s-5,5-5,5S45,30,50,30z'/%3E%3C/svg%3E");
+        }
+        
+        .produce-cucumber {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%2387c540' d='M20,20c-5,5-5,15,0,20l40,40c5,5,15,5,20,0s5-15,0-20L40,20C35,15,25,15,20,20z'/%3E%3Ccircle fill='%23ffffff' cx='30' cy='30' r='2'/%3E%3Ccircle fill='%23ffffff' cx='40' cy='40' r='2'/%3E%3Ccircle fill='%23ffffff' cx='50' cy='50' r='2'/%3E%3Ccircle fill='%23ffffff' cx='60' cy='60' r='2'/%3E%3Ccircle fill='%23ffffff' cx='70' cy='70' r='2'/%3E%3C/svg%3E");
+        }
+        
+        .produce-mushroom {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23a67c52' d='M40,50h20v30c0,5-5,10-10,10s-10-5-10-10V50z'/%3E%3Cpath fill='%23f5f5f5' d='M50,20c-15,0-25,10-25,20c0,5,5,10,10,10h30c5,0,10-5,10-10C75,30,65,20,50,20z'/%3E%3Ccircle fill='%23e73c3e' cx='40' cy='30' r='3'/%3E%3Ccircle fill='%23e73c3e' cx='60' cy='35' r='4'/%3E%3Ccircle fill='%23e73c3e' cx='45' cy='40' r='2'/%3E%3C/svg%3E");
         }
         
         @keyframes float-slow {
@@ -499,14 +536,14 @@ export default function JobsPage() {
       {/* Footer - Enhanced */}
       <footer className="bg-gray-900 text-white mt-24">
         <div className="max-w-7xl mx-auto py-12 px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <Logo className="w-[200px] filter brightness-0 invert opacity-90 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+              <Logo className="w-[180px] sm:w-[200px] filter brightness-0 invert opacity-90 mb-4" />
               <p className="text-gray-400 max-w-md">
                 Join our team and be part of a company that values innovation, quality, and community.
               </p>
             </div>
-            <div className="text-right md:text-right">
+            <div className="flex flex-col items-center md:items-end text-center md:text-right border-t md:border-t-0 pt-6 md:pt-0 mt-4 md:mt-0">
               <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
               <p className="text-gray-400">
                 Questions about careers? Email us at{" "}
@@ -514,7 +551,7 @@ export default function JobsPage() {
                   careers@galafoods.com
                 </a>
               </p>
-              <p className="text-gray-400 mt-2">
+              <p className="text-gray-400 mt-4">
                 © 2025 Gala Foods. All rights reserved.
               </p>
             </div>
