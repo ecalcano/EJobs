@@ -438,66 +438,57 @@ export default function Home() {
         onOpenChange={setShowThankYouDialog}
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-green-50/30">
-        <div className="container mx-auto py-8 px-4 sm:px-6">
+      <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-green-50/30 -mt-[1px]">
+        <div className="container mx-auto pt-0 pb-8 px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-              <div className="flex items-center">
-                <Logo className="h-16 filter drop-shadow-sm" />
-                {selectedJob && (
-                  <div className="hidden sm:block ml-6 pl-6 border-l border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-700">
-                      {selectedJob.title}
-                    </h2>
-                    <p className="text-sm text-gray-500">{selectedJob.location}</p>
+            <Card className="shadow-lg border-0 overflow-hidden bg-white/80 backdrop-blur-sm mt-0">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-green-500/5 border-b pb-6">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <Logo className="h-8 filter drop-shadow-sm mr-3" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-500 hover:text-gray-700 h-8 px-2"
+                      onClick={() => router.push("/")}
+                    >
+                      <ArrowLeft className="mr-1 h-3 w-3" />
+                      {t.backToJobs}
+                    </Button>
                   </div>
-                )}
-              </div>
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-500 hover:text-gray-700"
-                  onClick={() => router.push("/")}
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t.backToJobs}
-                </Button>
-                <div className="flex items-center space-x-2 border rounded-full px-3 py-1">
-                  <Globe className="h-4 w-4 text-gray-400" />
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value as Language)}
-                    className="text-sm bg-transparent border-none focus:ring-0 cursor-pointer"
-                  >
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                  </select>
+                  <div className="flex items-center space-x-1 border rounded-full px-2 py-1 bg-white/80">
+                    <Globe className="h-3 w-3 text-gray-400" />
+                    <select
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value as Language)}
+                      className="text-xs bg-transparent border-none focus:ring-0 cursor-pointer"
+                    >
+                      <option value="en">English</option>
+                      <option value="es">Español</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {selectedJob && (
-              <div className="sm:hidden mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-700">
-                  {selectedJob.title}
-                </h2>
-                <p className="text-sm text-gray-500">{selectedJob.location}</p>
-              </div>
-            )}
-
-            <Card className="shadow-lg border-0 overflow-hidden bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-primary/5 to-green-500/5 border-b pb-8">
+                
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 transition-all duration-300">
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3 transition-all duration-300">
                     {getTabIcon()}
                   </div>
-                  <CardTitle className="text-3xl font-bold text-gray-800">
+                  <CardTitle className="text-2xl font-bold text-gray-800">
                     {t.jobApplication}
                   </CardTitle>
-                  <CardDescription className="text-gray-600 mt-2 max-w-md">
+                  
+                  {selectedJob && (
+                    <div className="mt-2 mb-1 px-4 py-2 bg-white/70 rounded-lg inline-block">
+                      <h2 className="font-semibold text-gray-700">
+                        {selectedJob.title}
+                      </h2>
+                      <p className="text-sm text-gray-500">{selectedJob.location}</p>
+                    </div>
+                  )}
+                  
+                  <CardDescription className="text-gray-600 mt-1 max-w-md">
                     {selectedJob 
-                      ? `${t.applyingFor} ${selectedJob.title} (${selectedJob.location})`
+                      ? t.applyingFor
                       : t.generalApplication}
                   </CardDescription>
                 </div>
