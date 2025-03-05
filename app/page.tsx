@@ -531,7 +531,7 @@ export default function JobsPage() {
             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-primary rounded-full"></div>
           </h2>
           <p className="mt-8 text-lg text-gray-600 max-w-3xl mx-auto">
-            At Store One, we believe in creating an environment where our
+            At Compare Foods, we believe in creating an environment where our
             employees can thrive. We offer competitive benefits, opportunities
             for advancement, and a supportive work culture.
           </p>
@@ -619,10 +619,10 @@ export default function JobsPage() {
               <p className="text-gray-400">
                 Questions about careers? Email us at{" "}
                 <a
-                  href="mailto:careers@StoreOne.com"
+                  href="mailto:careers@comparefoods.com"
                   className="text-primary hover:underline"
                 >
-                  careers@StoreOne.com
+                  careers@comparefoods.com
                 </a>
               </p>
               <p className="text-gray-400 mt-4">
