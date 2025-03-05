@@ -5,7 +5,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,12 +43,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/lib/supabase";
-import { 
-  ClipboardListIcon, 
-  ExternalLinkIcon, 
-  PlusIcon, 
-  Pencil, 
+import {
+  ClipboardListIcon,
+  ExternalLinkIcon,
+  PlusIcon,
+  Pencil,
   Trash2,
   Briefcase,
   Users,
@@ -58,6 +66,8 @@ import {
   Mail,
   Clock,
   ToggleLeft,
+  Menu,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -169,14 +179,40 @@ export default function AdminPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
-  const [adminUsername, setAdminUsername] = useState('');
+  const [adminUsername, setAdminUsername] = useState("");
   const [searchField, setSearchField] = useState("name");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<Application | null>(null);
   const [showApplicationDialog, setShowApplicationDialog] = useState(false);
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [storeSearchQuery, setStoreSearchQuery] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Detect mobile view - default sidebar to closed on mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check window size on component mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener("resize", checkMobile);
+
+    // Clean up
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Initialize sidebar state based on device type
+  useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
 
   const jobForm = useForm<z.infer<typeof jobFormSchema>>({
     resolver: zodResolver(jobFormSchema),
@@ -216,10 +252,10 @@ export default function AdminPage() {
   });
 
   useEffect(() => {
-    const authStatus = localStorage.getItem('isAdminAuthenticated');
+    const authStatus = localStorage.getItem("isAdminAuthenticated");
     setIsAuthenticated(!!authStatus);
-    setAdminUsername(localStorage.getItem('adminUsername') || 'admin');
-    
+    setAdminUsername(localStorage.getItem("adminUsername") || "admin");
+
     if (!authStatus) {
       router.push("/admin/login");
     } else {
@@ -286,17 +322,18 @@ export default function AdminPage() {
   }, [selectedStore, storeForm]);
 
   function handleLogout() {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('isAdminAuthenticated');
-      localStorage.removeItem('adminUsername');
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("isAdminAuthenticated");
+      localStorage.removeItem("adminUsername");
     }
-    router.push('/admin/login');
+    router.push("/admin/login");
   }
 
   async function fetchApplications() {
     const { data, error } = await supabase
-      .from('applications')
-      .select(`
+      .from("applications")
+      .select(
+        `
         *,
         computer_skills,
         equipment_skills,
@@ -307,8 +344,9 @@ export default function AdminPage() {
         college,
         other_education,
         references
-      `)
-      .order('created_at', { ascending: false });
+      `
+      )
+      .order("created_at", { ascending: false });
 
     if (error) {
       toast.error("Failed to fetch applications");
@@ -316,13 +354,13 @@ export default function AdminPage() {
     }
 
     // Ensure array fields are properly initialized
-    const processedData = data?.map(app => ({
+    const processedData = data?.map((app) => ({
       ...app,
       computer_skills: app.computer_skills || [],
       equipment_skills: app.equipment_skills || [],
       position_preferences: app.position_preferences || [],
       department_preferences: app.department_preferences || [],
-      references: app.references || []
+      references: app.references || [],
     }));
 
     setApplications(processedData || []);
@@ -330,9 +368,9 @@ export default function AdminPage() {
 
   async function fetchJobs() {
     const { data, error } = await supabase
-      .from('jobs')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("jobs")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
       toast.error("Failed to fetch jobs");
@@ -344,9 +382,9 @@ export default function AdminPage() {
 
   async function fetchUsers() {
     const { data, error } = await supabase
-      .from('admin_users')
-      .select('id, username, created_at')
-      .order('created_at', { ascending: false });
+      .from("admin_users")
+      .select("id, username, created_at")
+      .order("created_at", { ascending: false });
 
     if (error) {
       toast.error("Failed to fetch users");
@@ -368,8 +406,12 @@ export default function AdminPage() {
         console.error("Error fetching stores:", error);
         throw error;
       }
-      
-      console.log("Fetched stores successfully:", data?.length || 0, "stores found");
+
+      console.log(
+        "Fetched stores successfully:",
+        data?.length || 0,
+        "stores found"
+      );
       setStores(data || []);
     } catch (error) {
       console.error("Error fetching stores:", error);
@@ -379,13 +421,13 @@ export default function AdminPage() {
 
   async function updateStatus(id: string, status: string) {
     const { error } = await supabase
-      .from('applications')
-      .update({ 
+      .from("applications")
+      .update({
         status,
         status_by: adminUsername,
-        status_date: new Date().toISOString()
+        status_date: new Date().toISOString(),
       })
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) {
       toast.error("Failed to update status");
@@ -400,16 +442,14 @@ export default function AdminPage() {
     try {
       if (editingJob) {
         const { error } = await supabase
-          .from('jobs')
+          .from("jobs")
           .update(values)
-          .eq('id', editingJob.id);
+          .eq("id", editingJob.id);
 
         if (error) throw error;
         toast.success("Job updated successfully");
       } else {
-        const { error } = await supabase
-          .from('jobs')
-          .insert([values]);
+        const { error } = await supabase.from("jobs").insert([values]);
 
         if (error) throw error;
         toast.success("Job created successfully");
@@ -427,22 +467,22 @@ export default function AdminPage() {
     try {
       if (editingUser) {
         const { error } = await supabase
-          .from('admin_users')
+          .from("admin_users")
           .update({
             username: values.username,
             password: values.password,
           })
-          .eq('id', editingUser.id);
+          .eq("id", editingUser.id);
 
         if (error) throw error;
         toast.success("User updated successfully");
       } else {
-        const { error } = await supabase
-          .from('admin_users')
-          .insert([{
+        const { error } = await supabase.from("admin_users").insert([
+          {
             username: values.username,
             password: values.password,
-          }]);
+          },
+        ]);
 
         if (error) throw error;
         toast.success("User created successfully");
@@ -460,10 +500,7 @@ export default function AdminPage() {
   async function deleteJob(id: string) {
     if (!confirm("Are you sure you want to delete this job?")) return;
 
-    const { error } = await supabase
-      .from('jobs')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("jobs").delete().eq("id", id);
 
     if (error) {
       toast.error("Failed to delete job");
@@ -477,10 +514,7 @@ export default function AdminPage() {
   async function deleteUser(id: string) {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
-    const { error } = await supabase
-      .from('admin_users')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("admin_users").delete().eq("id", id);
 
     if (error) {
       toast.error("Failed to delete user");
@@ -517,7 +551,7 @@ export default function AdminPage() {
           console.error("Supabase update error:", error);
           throw error;
         }
-        
+
         console.log("Store updated successfully, response:", data);
         toast.success("Store updated successfully");
       } else {
@@ -542,7 +576,7 @@ export default function AdminPage() {
           console.error("Supabase insert error:", error);
           throw error;
         }
-        
+
         console.log("New store created successfully, response:", data);
         toast.success("Store created successfully");
       }
@@ -589,9 +623,9 @@ export default function AdminPage() {
     }
   }
 
-  const filteredApplications = applications.filter(app => {
+  const filteredApplications = applications.filter((app) => {
     const searchLower = searchTerm.toLowerCase();
-    
+
     switch (searchField) {
       case "name":
         return (
@@ -619,64 +653,122 @@ export default function AdminPage() {
     }
   });
 
-  const filteredStores = stores.filter((store) =>
-    store.name.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
-    store.city.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
-    store.state.toLowerCase().includes(storeSearchQuery.toLowerCase())
+  const filteredStores = stores.filter(
+    (store) =>
+      store.name.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
+      store.city.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
+      store.state.toLowerCase().includes(storeSearchQuery.toLowerCase())
   );
 
   return (
     <div className="min-h-screen bg-[#f8f8f8]">
-      {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 bg-black text-white z-10 shadow-xl">
+      {/* Mobile Header - Always visible on small screens */}
+      <div className="lg:hidden flex items-center justify-between bg-black text-white p-4 sticky top-0 z-20 shadow-md">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-red-600 flex items-center justify-center text-sm font-medium">
+            {adminUsername?.charAt(0).toUpperCase() || "A"}
+          </div>
+          <h1 className="text-lg font-bold">Admin Portal</h1>
+        </div>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+        >
+          {sidebarOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </button>
+      </div>
+
+      {/* Sidebar - Modified for better mobile handling */}
+      <aside
+        className={`
+          fixed left-0 top-0 h-full w-64 bg-black text-white z-30 shadow-xl
+          transform transition-transform duration-300 ease-in-out
+          lg:translate-x-0 
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        {/* Sidebar content */}
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-white mb-8">Admin Portal</h1>
-          
-          <nav className="space-y-1">
-            <button 
-              onClick={() => setActiveTab("applications")}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg bg-red-600 text-white font-medium"
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-1 rounded-lg hover:bg-gray-800 transition-colors lg:hidden"
             >
-              <LayoutDashboard className="h-5 w-5" />
-              <span>Dashboard</span>
+              <X className="h-5 w-5" />
             </button>
-            
-            <button 
-              onClick={() => setActiveTab("applications")}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+          </div>
+
+          <nav className="space-y-1">
+            {/* ...existing navigation buttons... */}
+            <button
+              onClick={() => {
+                setActiveTab("applications");
+                if (isMobile) setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg ${
+                activeTab === "applications"
+                  ? "bg-red-600 text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+              } transition-colors`}
             >
               <ClipboardListIcon className="h-5 w-5" />
               <span>Applications</span>
             </button>
-            
-            <button 
-              onClick={() => setActiveTab("jobs")}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+
+            <button
+              onClick={() => {
+                setActiveTab("jobs");
+                if (isMobile) setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg ${
+                activeTab === "jobs"
+                  ? "bg-red-600 text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+              } transition-colors`}
             >
               <Briefcase className="h-5 w-5" />
               <span>Job Listings</span>
             </button>
-            
-            <button 
-              onClick={() => setActiveTab("stores")}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+
+            <button
+              onClick={() => {
+                setActiveTab("stores");
+                if (isMobile) setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg ${
+                activeTab === "stores"
+                  ? "bg-red-600 text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+              } transition-colors`}
             >
               <Store className="h-5 w-5" />
               <span>Stores</span>
             </button>
-            
-            <button 
-              onClick={() => setActiveTab("users")}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
+
+            <button
+              onClick={() => {
+                setActiveTab("users");
+                if (isMobile) setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg ${
+                activeTab === "users"
+                  ? "bg-red-600 text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+              } transition-colors`}
             >
               <Users className="h-5 w-5" />
               <span>Users</span>
             </button>
           </nav>
         </div>
-        
+
         <div className="absolute bottom-0 left-0 w-full p-6">
-          <button 
+          <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-300 hover:bg-gray-800 transition-colors"
           >
@@ -684,82 +776,133 @@ export default function AdminPage() {
             <span>Logout</span>
           </button>
         </div>
-      </div>
+      </aside>
 
-      {/* Main Content */}
-      <div className="ml-64 p-8">
-        <div className="flex items-center justify-between mb-8">
+      {/* Overlay for mobile - only show when sidebar is open on mobile */}
+      {sidebarOpen && isMobile && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Main Content - Make sure padding adapts based on sidebar visibility */}
+      <main
+        className={`
+          transition-all duration-300 ease-in-out
+          ${sidebarOpen ? "lg:ml-64" : "ml-0"}
+          p-2 sm:p-4 lg:p-8 pt-4
+          ${isMobile ? "mt-14" : ""}
+        `}
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-3">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
-            <p className="text-gray-500 mt-1">Manage applications and job listings</p>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Manage {activeTab} and related data
+            </p>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-medium">
-                {adminUsername?.charAt(0).toUpperCase() || 'A'}
+
+          {!sidebarOpen && (
+            <div className="flex items-center gap-4">
+              <div className="hidden lg:flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-medium">
+                  {adminUsername?.charAt(0).toUpperCase() || "A"}
+                </div>
+                <div className="text-sm font-medium">
+                  {adminUsername || "Admin"}
+                </div>
               </div>
-              <div className="text-sm font-medium">{adminUsername || 'Admin'}</div>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
           <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Total Applications</p>
-                  <h3 className="text-3xl font-bold mt-1">{applications.length}</h3>
+                  <p className="text-gray-500 text-xs sm:text-sm">
+                    Total Applications
+                  </p>
+                  <h3 className="text-xl sm:text-3xl font-bold mt-1">
+                    {applications.length}
+                  </h3>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-                  <ClipboardListIcon className="h-6 w-6 text-red-600" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <ClipboardListIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Active Jobs</p>
-                  <h3 className="text-3xl font-bold mt-1">{jobs.filter(job => job.active).length}</h3>
+                  <p className="text-gray-500 text-xs sm:text-sm">
+                    Active Jobs
+                  </p>
+                  <h3 className="text-xl sm:text-3xl font-bold mt-1">
+                    {jobs.filter((job) => job.active).length}
+                  </h3>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-red-600" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <Briefcase className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+
+          <Card className="bg-white shadow-md border-0 hover:shadow-lg transition-shadow sm:col-span-2 lg:col-span-1">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Admin Users</p>
-                  <h3 className="text-3xl font-bold mt-1">{users.length}</h3>
+                  <p className="text-gray-500 text-xs sm:text-sm">
+                    Admin Users
+                  </p>
+                  <h3 className="text-xl sm:text-3xl font-bold mt-1">
+                    {users.length}
+                  </h3>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-red-600" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white p-1 rounded-lg border border-gray-200 shadow-sm">
-            <TabsTrigger value="applications" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-4 sm:space-y-6"
+        >
+          <TabsList className="bg-white p-1 rounded-lg border border-gray-200 shadow-sm w-full overflow-x-auto flex flex-nowrap">
+            <TabsTrigger
+              value="applications"
+              className="text-xs sm:text-sm whitespace-nowrap data-[state=active]:bg-red-600 data-[state=active]:text-white"
+            >
               Applications
             </TabsTrigger>
-            <TabsTrigger value="jobs" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+            <TabsTrigger
+              value="jobs"
+              className="text-xs sm:text-sm whitespace-nowrap data-[state=active]:bg-red-600 data-[state=active]:text-white"
+            >
               Job Listings
             </TabsTrigger>
-            <TabsTrigger value="stores" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+            <TabsTrigger
+              value="stores"
+              className="text-xs sm:text-sm whitespace-nowrap data-[state=active]:bg-red-600 data-[state=active]:text-white"
+            >
               Stores
             </TabsTrigger>
-            <TabsTrigger value="users" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+            <TabsTrigger
+              value="users"
+              className="text-xs sm:text-sm whitespace-nowrap data-[state=active]:bg-red-600 data-[state=active]:text-white"
+            >
               Users
             </TabsTrigger>
           </TabsList>
@@ -767,19 +910,16 @@ export default function AdminPage() {
           <TabsContent value="applications">
             <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
               <CardHeader className="bg-white pb-4 border-b border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex flex-col space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
                       <ClipboardListIcon className="h-4 w-4 text-red-600" />
                     </div>
                     <CardTitle>Job Applications</CardTitle>
                   </div>
-                  <div className="flex flex-col sm:flex-row items-center gap-2">
-                    <Select
-                      value={searchField}
-                      onValueChange={setSearchField}
-                    >
-                      <SelectTrigger className="w-[150px] border-gray-200 bg-white">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <Select value={searchField} onValueChange={setSearchField}>
+                      <SelectTrigger className="w-full sm:w-[150px] border-gray-200 bg-white">
                         <SelectValue placeholder="Search by..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -794,108 +934,143 @@ export default function AdminPage() {
                         <SelectItem value="status">Status</SelectItem>
                       </SelectContent>
                     </Select>
-                    <div className="relative w-full sm:w-64">
+                    <div className="relative w-full">
                       <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
                       <Input
                         placeholder={`Search by ${searchField}...`}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-8 border-gray-200 bg-white"
+                        className="pl-8 border-gray-200 bg-white w-full"
                       />
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="rounded-md">
-                  <Table>
-                    <TableHeader className="bg-gray-50">
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Job Title</TableHead>
-                        <TableHead>Contact</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Resume</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredApplications.map((app) => (
-                        <TableRow 
-                          key={app.id}
-                          className="cursor-pointer hover:bg-gray-50 transition-colors"
-                          onClick={() => {
-                            router.push(`/admin/application/${app.id}`);
-                          }}
-                        >
-                          <TableCell className="font-medium">
-                            {app.first_name} {app.last_name}
-                          </TableCell>
-                          <TableCell>{app.job_title || '-'}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span>{app.email}</span>
-                              <span className="text-sm text-gray-500">{app.phone}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                app.status === 'approved' 
-                                  ? 'default' 
-                                  : app.status === 'rejected' 
-                                  ? 'destructive' 
-                                  : 'secondary'
-                              }
-                              className={app.status === 'approved' ? "bg-green-500 hover:bg-green-600 text-white" : ""}
-                            >
-                              {app.status === 'approved' && <CheckCircle className="h-3 w-3 mr-1" />}
-                              {app.status === 'rejected' && <XCircle className="h-3 w-3 mr-1" />}
-                              {app.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {app.resume_url && (
-                              <a
-                                href={app.resume_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-red-600 hover:text-red-800 hover:underline"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <FileText className="h-4 w-4" /> View
-                              </a>
-                            )}
-                          </TableCell>
-                          <TableCell onClick={(e) => e.stopPropagation()}>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => updateStatus(app.id, 'approved')}
-                                disabled={app.status === 'approved'}
-                                className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
-                              >
-                                <CheckCircle className="h-3.5 w-3.5 mr-1" />
-                                Approve
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => updateStatus(app.id, 'rejected')}
-                                disabled={app.status === 'rejected'}
-                                className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-                              >
-                                <XCircle className="h-3.5 w-3.5 mr-1" />
-                                Reject
-                              </Button>
-                            </div>
-                          </TableCell>
+                <ScrollArea className="w-full overflow-auto">
+                  <div className="rounded-md min-w-[800px]">
+                    <Table>
+                      <TableHeader className="bg-gray-50">
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Contact</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Resume</TableHead>
+                          <TableHead>Actions</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredApplications.length === 0 ? (
+                          <TableRow>
+                            <TableCell
+                              colSpan={6}
+                              className="text-center py-8 text-gray-500"
+                            >
+                              No applications found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredApplications.map((app) => (
+                            <TableRow
+                              key={app.id}
+                              className="cursor-pointer hover:bg-gray-50 transition-colors"
+                              onClick={() => {
+                                router.push(`/admin/application/${app.id}`);
+                              }}
+                            >
+                              <TableCell className="font-medium">
+                                {app.first_name} {app.last_name}
+                              </TableCell>
+                              <TableCell className="max-w-[150px] truncate">
+                                {app.job_title || "-"}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-col">
+                                  <span className="text-sm truncate max-w-[180px]">
+                                    {app.email}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    {app.phone}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    app.status === "approved"
+                                      ? "default"
+                                      : app.status === "rejected"
+                                      ? "destructive"
+                                      : "secondary"
+                                  }
+                                  className={
+                                    app.status === "approved"
+                                      ? "bg-green-500 hover:bg-green-600 text-white"
+                                      : ""
+                                  }
+                                >
+                                  {app.status === "approved" && (
+                                    <CheckCircle className="h-3 w-3 mr-1" />
+                                  )}
+                                  {app.status === "rejected" && (
+                                    <XCircle className="h-3 w-3 mr-1" />
+                                  )}
+                                  {app.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {app.resume_url && (
+                                  <a
+                                    href={app.resume_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-red-600 hover:text-red-800 hover:underline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <FileText className="h-4 w-4" /> View
+                                  </a>
+                                )}
+                              </TableCell>
+                              <TableCell onClick={(e) => e.stopPropagation()}>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      updateStatus(app.id, "approved")
+                                    }
+                                    disabled={app.status === "approved"}
+                                    className="whitespace-nowrap border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700 text-xs h-8"
+                                  >
+                                    <CheckCircle className="h-3.5 w-3.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">
+                                      Approve
+                                    </span>
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      updateStatus(app.id, "rejected")
+                                    }
+                                    disabled={app.status === "rejected"}
+                                    className="whitespace-nowrap border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700 text-xs h-8"
+                                  >
+                                    <XCircle className="h-3.5 w-3.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">
+                                      Reject
+                                    </span>
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </TabsContent>
@@ -903,7 +1078,7 @@ export default function AdminPage() {
           <TabsContent value="jobs">
             <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
               <CardHeader className="bg-white pb-4 border-b border-gray-100">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
                       <Briefcase className="h-4 w-4 text-red-600" />
@@ -917,7 +1092,7 @@ export default function AdminPage() {
                           setEditingJob(null);
                           setShowJobDialog(true);
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-white"
+                        className="bg-red-600 hover:bg-red-700 text-white w-full sm:w-auto"
                       >
                         <PlusIcon className="h-4 w-4 mr-2" />
                         Add Job
@@ -927,92 +1102,120 @@ export default function AdminPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="rounded-md">
-                  <Table>
-                    <TableHeader className="bg-gray-50">
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Department</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {jobs.map((job) => (
-                        <TableRow key={job.id} className="hover:bg-gray-50 transition-colors">
-                          <TableCell className="font-medium">
-                            <Link href={'/application?job=' + job.id} className="text-red-600 hover:text-red-800 hover:underline">
-                              {job.title}
-                            </Link>
-                          </TableCell>
-                          <TableCell>{job.department}</TableCell>
-                          <TableCell>{job.location}</TableCell>
-                          <TableCell>{job.type}</TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={job.active ? "default" : "secondary"}
-                              className={job.active ? "bg-green-500 hover:bg-green-600 text-white" : ""}
-                            >
-                              {job.active && <CheckCircle className="h-3 w-3 mr-1" />}
-                              {job.active ? "Active" : "Inactive"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setEditingJob(job);
-                                  setShowJobDialog(true);
-                                }}
-                                className="border-gray-200 hover:bg-gray-50"
-                              >
-                                <Pencil className="h-4 w-4 text-gray-600" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => deleteJob(job.id)}
-                                className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
+                <ScrollArea className="w-full overflow-auto">
+                  <div className="rounded-md min-w-[800px]">
+                    <Table>
+                      <TableHeader className="bg-gray-50">
+                        <TableRow>
+                          <TableHead>Title</TableHead>
+                          <TableHead>Department</TableHead>
+                          <TableHead>Location</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Actions</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {jobs.length === 0 ? (
+                          <TableRow>
+                            <TableCell
+                              colSpan={6}
+                              className="text-center py-8 text-gray-500"
+                            >
+                              No job listings found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          jobs.map((job) => (
+                            <TableRow
+                              key={job.id}
+                              className="hover:bg-gray-50 transition-colors"
+                            >
+                              <TableCell className="font-medium">
+                                <Link
+                                  href={"/application?job=" + job.id}
+                                  className="text-red-600 hover:text-red-800 hover:underline"
+                                >
+                                  {job.title}
+                                </Link>
+                              </TableCell>
+                              <TableCell>{job.department}</TableCell>
+                              <TableCell>{job.location}</TableCell>
+                              <TableCell>{job.type}</TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={job.active ? "default" : "secondary"}
+                                  className={
+                                    job.active
+                                      ? "bg-green-500 hover:bg-green-600 text-white"
+                                      : ""
+                                  }
+                                >
+                                  {job.active && (
+                                    <CheckCircle className="h-3 w-3 mr-1" />
+                                  )}
+                                  {job.active ? "Active" : "Inactive"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setEditingJob(job);
+                                      setShowJobDialog(true);
+                                    }}
+                                    className="border-gray-200 hover:bg-gray-50"
+                                  >
+                                    <Pencil className="h-4 w-4 text-gray-600" />
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => deleteJob(job.id)}
+                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="stores" className="space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <TabsContent value="stores" className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">Store Management</h2>
-                <p className="text-gray-500">Manage store locations and details</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+                  Store Management
+                </h2>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Manage store locations and details
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="relative">
+              <div className="flex flex-col sm:flex-row items-start gap-2">
+                <div className="relative w-full sm:flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     placeholder="Search stores..."
-                    className="pl-9 w-full md:w-[250px]"
+                    className="pl-9 w-full"
                     value={storeSearchQuery}
                     onChange={(e) => setStoreSearchQuery(e.target.value)}
                   />
                 </div>
-                <Button 
+                <Button
                   onClick={() => {
-                    console.log("Add Store button clicked");
                     addNewStore();
-                  }} 
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white w-full sm:w-auto"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
                   Add Store
@@ -1022,101 +1225,128 @@ export default function AdminPage() {
 
             <Card className="overflow-hidden border-0 shadow-md">
               <CardContent className="p-0">
-                <Table>
-                  <TableHeader className="bg-gray-50">
-                    <TableRow>
-                      <TableHead className="font-semibold">Store Name</TableHead>
-                      <TableHead className="font-semibold">Location</TableHead>
-                      <TableHead className="font-semibold">Contact</TableHead>
-                      <TableHead className="font-semibold">Status</TableHead>
-                      <TableHead className="font-semibold text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredStores.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                          {storeSearchQuery
-                            ? "No stores found matching your search."
-                            : "No stores have been added yet."}
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredStores.map((store) => (
-                        <TableRow key={store.id} className="hover:bg-gray-50">
-                          <TableCell className="font-medium">{store.name}</TableCell>
-                          <TableCell>
-                            <div className="flex items-start gap-2">
-                              <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-                              <div>
-                                <p className="text-sm">{store.address}</p>
-                                <p className="text-xs text-gray-500">
-                                  {store.city}, {store.state} {store.zip_code}
-                                </p>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {store.phone && (
-                              <div className="flex items-center gap-2 mb-1">
-                                <Phone className="h-3 w-3 text-gray-400" />
-                                <span className="text-sm">{store.phone}</span>
-                              </div>
-                            )}
-                            {store.email && (
-                              <div className="flex items-center gap-2">
-                                <Mail className="h-3 w-3 text-gray-400" />
-                                <span className="text-sm">{store.email}</span>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={store.active ? "default" : "outline"}
-                              className={
-                                store.active
-                                  ? "bg-green-100 text-green-800 hover:bg-green-100"
-                                  : "text-gray-500"
-                              }
-                            >
-                              {store.active ? "Active" : "Inactive"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => editStore(store)}
-                                className="h-8 w-8"
-                              >
-                                <Pencil className="h-4 w-4" />
-                                <span className="sr-only">Edit</span>
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  if (
-                                    window.confirm(
-                                      `Are you sure you want to delete ${store.name}?`
-                                    )
-                                  ) {
-                                    deleteStore(store.id);
-                                  }
-                                }}
-                                className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                <span className="sr-only">Delete</span>
-                              </Button>
-                            </div>
-                          </TableCell>
+                <ScrollArea className="w-full overflow-auto">
+                  <div className="min-w-[800px]">
+                    <Table>
+                      <TableHeader className="bg-gray-50">
+                        <TableRow>
+                          <TableHead className="font-semibold">
+                            Store Name
+                          </TableHead>
+                          <TableHead className="font-semibold">
+                            Location
+                          </TableHead>
+                          <TableHead className="font-semibold">
+                            Contact
+                          </TableHead>
+                          <TableHead className="font-semibold">
+                            Status
+                          </TableHead>
+                          <TableHead className="font-semibold text-right">
+                            Actions
+                          </TableHead>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredStores.length === 0 ? (
+                          <TableRow>
+                            <TableCell
+                              colSpan={5}
+                              className="text-center py-8 text-gray-500"
+                            >
+                              {storeSearchQuery
+                                ? "No stores found matching your search."
+                                : "No stores have been added yet."}
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredStores.map((store) => (
+                            <TableRow
+                              key={store.id}
+                              className="hover:bg-gray-50"
+                            >
+                              <TableCell className="font-medium">
+                                {store.name}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-start gap-2">
+                                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+                                  <div>
+                                    <p className="text-sm">{store.address}</p>
+                                    <p className="text-xs text-gray-500">
+                                      {store.city}, {store.state}{" "}
+                                      {store.zip_code}
+                                    </p>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {store.phone && (
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Phone className="h-3 w-3 text-gray-400" />
+                                    <span className="text-sm">
+                                      {store.phone}
+                                    </span>
+                                  </div>
+                                )}
+                                {store.email && (
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="h-3 w-3 text-gray-400" />
+                                    <span className="text-sm truncate max-w-[150px]">
+                                      {store.email}
+                                    </span>
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={store.active ? "default" : "outline"}
+                                  className={
+                                    store.active
+                                      ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                      : "text-gray-500"
+                                  }
+                                >
+                                  {store.active ? "Active" : "Inactive"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => editStore(store)}
+                                    className="h-8 w-8"
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                    <span className="sr-only">Edit</span>
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                      if (
+                                        window.confirm(
+                                          `Are you sure you want to delete ${store.name}?`
+                                        )
+                                      ) {
+                                        deleteStore(store.id);
+                                      }
+                                    }}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">Delete</span>
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </TabsContent>
@@ -1124,21 +1354,24 @@ export default function AdminPage() {
           <TabsContent value="users">
             <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
               <CardHeader className="bg-white pb-4 border-b border-gray-100">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
                       <Users className="h-4 w-4 text-red-600" />
                     </div>
                     <CardTitle>Users</CardTitle>
                   </div>
-                  <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
+                  <Dialog
+                    open={showUserDialog}
+                    onOpenChange={setShowUserDialog}
+                  >
                     <DialogTrigger asChild>
                       <Button
                         onClick={() => {
                           setEditingUser(null);
                           setShowUserDialog(true);
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-white"
+                        className="bg-red-600 hover:bg-red-700 text-white w-full sm:w-auto"
                       >
                         <PlusIcon className="h-4 w-4 mr-2" />
                         Add User
@@ -1159,9 +1392,16 @@ export default function AdminPage() {
                     </TableHeader>
                     <TableBody>
                       {users.map((user) => (
-                        <TableRow key={user.id} className="hover:bg-gray-50 transition-colors">
-                          <TableCell className="font-medium">{user.username}</TableCell>
-                          <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
+                        <TableRow
+                          key={user.id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <TableCell className="font-medium">
+                            {user.username}
+                          </TableCell>
+                          <TableCell>
+                            {new Date(user.created_at).toLocaleDateString()}
+                          </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
                               <Button
@@ -1194,15 +1434,13 @@ export default function AdminPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+      </main>
 
       {/* Job Dialog */}
       <Dialog open={showJobDialog} onOpenChange={setShowJobDialog}>
         <DialogContent className="sm:max-w-[600px] z-[100]">
           <DialogHeader>
-            <DialogTitle>
-              {editingJob ? "Edit Job" : "Add New Job"}
-            </DialogTitle>
+            <DialogTitle>{editingJob ? "Edit Job" : "Add New Job"}</DialogTitle>
           </DialogHeader>
           <Form {...jobForm}>
             <form
@@ -1355,14 +1593,14 @@ export default function AdminPage() {
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                  >
+                  <Button type="button" variant="outline">
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white">
+                <Button
+                  type="submit"
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
                   {editingJob ? "Update Job" : "Add Job"}
                 </Button>
               </DialogFooter>
@@ -1405,10 +1643,10 @@ export default function AdminPage() {
                   <FormItem>
                     <FormLabel>Password*</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="Enter password" 
-                        {...field} 
+                      <Input
+                        type="password"
+                        placeholder="Enter password"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1418,14 +1656,14 @@ export default function AdminPage() {
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                  >
+                  <Button type="button" variant="outline">
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white">
+                <Button
+                  type="submit"
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
                   {editingUser ? "Update User" : "Add User"}
                 </Button>
               </DialogFooter>
@@ -1540,7 +1778,11 @@ export default function AdminPage() {
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter phone number" {...field} value={field.value || ""} />
+                        <Input
+                          placeholder="Enter phone number"
+                          {...field}
+                          value={field.value || ""}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1554,7 +1796,11 @@ export default function AdminPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter email address" {...field} value={field.value || ""} />
+                        <Input
+                          placeholder="Enter email address"
+                          {...field}
+                          value={field.value || ""}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1604,16 +1850,13 @@ export default function AdminPage() {
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                  >
+                  <Button type="button" variant="outline">
                     Cancel
                   </Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     className="bg-red-600 hover:bg-red-700 text-white"
                     onClick={() => {
                       console.log("Submit button clicked manually");
@@ -1632,36 +1875,6 @@ export default function AdminPage() {
       </Dialog>
 
       {/* Direct test button and Test Dialog */}
-      <div className="fixed bottom-4 right-4 space-y-2">
-        <Button 
-          onClick={() => {
-            console.log("Direct test button clicked");
-            setStoreDialogOpen(true);
-          }}
-          className="bg-green-600 hover:bg-green-700 text-white w-full"
-        >
-          Open Store Dialog Directly
-        </Button>
-        
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full">
-              Test Dialog
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Test Dialog</DialogTitle>
-            </DialogHeader>
-            <p>This is a test dialog to check if the Dialog component is working properly.</p>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button>Close</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
     </div>
   );
 }
