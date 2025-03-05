@@ -2,12 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { BriefcaseIcon, Loader2, ArrowLeft, CheckCircle2, Globe, ChevronRight, UserIcon, GraduationCapIcon, WrenchIcon } from "lucide-react";
+import {
+  BriefcaseIcon,
+  Loader2,
+  ArrowLeft,
+  CheckCircle2,
+  Globe,
+  ChevronRight,
+  UserIcon,
+  GraduationCapIcon,
+  WrenchIcon,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -139,7 +155,9 @@ export default function Home() {
   const [showThankYouDialog, setShowThankYouDialog] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [language, setLanguage] = useState<Language>("en");
-  const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useState<
+    "personal" | "education" | "skills"
+  >("personal");
   const t = translations[language];
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -238,7 +256,7 @@ export default function Home() {
           console.error("Error:", error);
         }
       };
-      
+
       fetchJob(cleanJobId);
     }
   }, [searchParams, supabase]);
@@ -317,27 +335,27 @@ export default function Home() {
     } catch (error: any) {
       // Error handling path
       console.error("Error submitting application:", error);
-      
+
       // Show error toast
       toast.error(
         error.message || "Failed to submit application. Please try again."
       );
-      
+
       // Force navigation to the first tab
       console.log("Navigating to personal tab due to submission error");
       setTimeout(() => {
         setActiveTab("personal");
-        
+
         // Scroll to the top of the form
         window.scrollTo({
           top: 0,
-          behavior: "smooth"
+          behavior: "smooth",
         });
-        
+
         // Show another toast to confirm the tab change
         toast.info(
-          language === "en" 
-            ? "Please review your application starting from personal information" 
+          language === "en"
+            ? "Please review your application starting from personal information"
             : "Por favor revise su solicitud comenzando desde la información personal"
         );
       }, 500);
@@ -349,48 +367,64 @@ export default function Home() {
   // Validate personal info fields
   const validatePersonalInfo = () => {
     const personalFields = [
-      "firstName", "lastName", "email", "phone", 
-      "address", "city", "state", "zipCode",
-      "isUnder18", "isEligibleToWork", "canProvideProof", "hasFelony"
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "address",
+      "city",
+      "state",
+      "zipCode",
+      "isUnder18",
+      "isEligibleToWork",
+      "canProvideProof",
+      "hasFelony",
     ];
-    
+
     // Trigger validation for personal fields
     form.trigger(personalFields as any);
-    
+
     // Check if there are any errors in the personal fields
-    const hasErrors = personalFields.some(field => 
-      form.formState.errors[field as keyof typeof form.formState.errors]
+    const hasErrors = personalFields.some(
+      (field) =>
+        form.formState.errors[field as keyof typeof form.formState.errors]
     );
-    
+
     if (hasErrors) {
-      toast.error(language === "en" 
-        ? "Please complete all required personal information fields" 
-        : "Por favor complete todos los campos requeridos de información personal");
+      toast.error(
+        language === "en"
+          ? "Please complete all required personal information fields"
+          : "Por favor complete todos los campos requeridos de información personal"
+      );
       return false;
     }
-    
+
     return true;
   };
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = (value: "personal" | "education" | "skills") => {
     // Always allow going back to previous tabs
     if (
       (activeTab === "education" && value === "personal") ||
-      (activeTab === "skills" && (value === "education" || value === "personal"))
+      (activeTab === "skills" &&
+        (value === "education" || value === "personal"))
     ) {
       setActiveTab(value);
       return;
     }
 
     // If trying to navigate away from personal tab, validate first
-    if (activeTab === "personal" && (value === "education" || value === "skills")) {
+    if (
+      activeTab === "personal" &&
+      (value === "education" || value === "skills")
+    ) {
       if (!validatePersonalInfo()) {
         return; // Don't allow tab change if validation fails
       }
     }
-    
+
     // If trying to navigate from education to skills, could add education validation here
-    
+
     setActiveTab(value);
   };
 
@@ -439,24 +473,24 @@ export default function Home() {
       />
 
       <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-green-50/30 -mt-[1px]">
-        <div className="container mx-auto pt-0 pb-8 px-4 sm:px-6">
+        <div className="container mx-auto pt-0 pb-4 px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
             <Card className="shadow-lg border-0 overflow-hidden bg-white/80 backdrop-blur-sm mt-0">
-              <CardHeader className="bg-gradient-to-r from-primary/5 to-green-500/5 border-b pb-6">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-green-500/5 border-b py-3">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
-                    <Logo className="h-8 filter drop-shadow-sm mr-3" />
+                    <Logo className="h-7 filter drop-shadow-sm mr-2" />
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-gray-500 hover:text-gray-700 h-8 px-2"
+                      className="text-gray-500 hover:text-gray-700 h-7 px-2 text-xs"
                       onClick={() => router.push("/")}
                     >
                       <ArrowLeft className="mr-1 h-3 w-3" />
                       {t.backToJobs}
                     </Button>
                   </div>
-                  <div className="flex items-center space-x-1 border rounded-full px-2 py-1 bg-white/80">
+                  <div className="flex items-center space-x-1 border rounded-full px-2 py-0.5 bg-white/80">
                     <Globe className="h-3 w-3 text-gray-400" />
                     <select
                       value={language}
@@ -468,58 +502,80 @@ export default function Home() {
                     </select>
                   </div>
                 </div>
-                
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3 transition-all duration-300">
+
+                <div className="flex flex-col items-center text-center mt-1">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 transition-all duration-300">
                     {getTabIcon()}
                   </div>
-                  <CardTitle className="text-2xl font-bold text-gray-800">
+                  <CardTitle className="text-xl font-bold text-gray-800">
                     {t.jobApplication}
                   </CardTitle>
-                  
+
                   {selectedJob && (
-                    <div className="mt-2 mb-1 px-4 py-2 bg-white/70 rounded-lg inline-block">
-                      <h2 className="font-semibold text-gray-700">
+                    <div className="mt-1 mb-1 px-3 py-1 bg-white/70 rounded-lg inline-block">
+                      <h2 className="font-semibold text-gray-700 text-sm">
                         {selectedJob.title}
                       </h2>
-                      <p className="text-sm text-gray-500">{selectedJob.location}</p>
+                      <p className="text-xs text-gray-500">
+                        {selectedJob.location}
+                      </p>
                     </div>
                   )}
-                  
-                  <CardDescription className="text-gray-600 mt-1 max-w-md">
-                    {selectedJob 
-                      ? t.applyingFor
-                      : t.generalApplication}
+
+                  <CardDescription className="text-gray-600 mt-1 max-w-md text-sm">
+                    {selectedJob ? t.applyingFor : t.generalApplication}
                   </CardDescription>
                 </div>
 
                 {/* Progress bar */}
-                <div className="mt-8 max-w-md mx-auto w-full">
-                  <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div 
+                <div className="mt-4 max-w-md mx-auto w-full">
+                  <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div
                       className="h-full bg-gradient-to-r from-primary to-green-500 transition-all duration-500 ease-in-out"
                       style={{ width: `${getProgressPercentage()}%` }}
                     ></div>
                   </div>
-                  <div className="flex justify-between mt-2 text-xs text-gray-500">
-                    <button 
+                  <div className="flex justify-between mt-1 text-xs text-gray-500">
+                    <button
                       type="button"
-                      onClick={() => handleTabChange("personal")}
-                      className={`${activeTab === "personal" ? "font-medium text-primary" : ""} focus:outline-none`}
+                      onClick={() =>
+                        handleTabChange(
+                          "personal" as "personal" | "education" | "skills"
+                        )
+                      }
+                      className={`${
+                        activeTab === "personal"
+                          ? "font-medium text-primary"
+                          : ""
+                      } focus:outline-none`}
                     >
                       Personal Info
                     </button>
-                    <button 
+                    <button
                       type="button"
-                      onClick={() => handleTabChange("education")}
-                      className={`${activeTab === "education" ? "font-medium text-primary" : ""} focus:outline-none`}
+                      onClick={() =>
+                        handleTabChange(
+                          "education" as "personal" | "education" | "skills"
+                        )
+                      }
+                      className={`${
+                        activeTab === "education"
+                          ? "font-medium text-primary"
+                          : ""
+                      } focus:outline-none`}
                     >
                       Education
                     </button>
-                    <button 
+                    <button
                       type="button"
-                      onClick={() => handleTabChange("skills")}
-                      className={`${activeTab === "skills" ? "font-medium text-primary" : ""} focus:outline-none`}
+                      onClick={() =>
+                        handleTabChange(
+                          "skills" as "personal" | "education" | "skills"
+                        )
+                      }
+                      className={`${
+                        activeTab === "skills" ? "font-medium text-primary" : ""
+                      } focus:outline-none`}
                     >
                       Skills & Preferences
                     </button>
@@ -527,112 +583,122 @@ export default function Home() {
                 </div>
               </CardHeader>
 
-              <CardContent className="p-6 sm:p-8">
+              <CardContent className="p-4">
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
+                    className="space-y-4"
                   >
                     <div className="w-full">
                       {activeTab === "personal" && (
-                        <div className="mt-6 space-y-6">
+                        <div className="mt-2 space-y-4">
                           <PersonalInfoTab form={form} language={language} />
-                          <div className="flex justify-end pt-4">
-                            <Button 
-                              type="button" 
+                          <div className="flex justify-end pt-2">
+                            <Button
+                              type="button"
                               onClick={handleNextTab}
-                              className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300"
+                              className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300 py-1.5 h-auto text-sm"
                             >
                               {t.next}
-                              <ChevronRight className="ml-2 h-4 w-4" />
+                              <ChevronRight className="ml-1 h-3 w-3" />
                             </Button>
                           </div>
                         </div>
                       )}
 
                       {activeTab === "education" && (
-                        <div className="mt-6 space-y-6">
+                        <div className="mt-2 space-y-4">
                           <EducationTab form={form} language={language} />
-                          <div className="flex justify-between pt-4">
-                            <Button 
-                              type="button" 
+                          <div className="flex justify-between pt-2">
+                            <Button
+                              type="button"
                               variant="outline"
                               onClick={handlePrevTab}
+                              className="py-1.5 h-auto text-sm"
                             >
-                              <ArrowLeft className="mr-2 h-4 w-4" />
+                              <ArrowLeft className="mr-1 h-3 w-3" />
                               {t.previous}
                             </Button>
-                            <Button 
-                              type="button" 
+                            <Button
+                              type="button"
                               onClick={handleNextTab}
-                              className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300"
+                              className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300 py-1.5 h-auto text-sm"
                             >
                               {t.next}
-                              <ChevronRight className="ml-2 h-4 w-4" />
+                              <ChevronRight className="ml-1 h-3 w-3" />
                             </Button>
                           </div>
                         </div>
                       )}
 
                       {activeTab === "skills" && (
-                        <div className="mt-6 space-y-6">
+                        <div className="mt-2 space-y-4">
                           <TechnicalSkillsTab form={form} language={language} />
-                          <div className="flex justify-between pt-4">
-                            <Button 
-                              type="button" 
+                          <div className="flex justify-between pt-2">
+                            <Button
+                              type="button"
                               variant="outline"
                               onClick={handlePrevTab}
+                              className="py-1.5 h-auto text-sm"
                             >
-                              <ArrowLeft className="mr-2 h-4 w-4" />
+                              <ArrowLeft className="mr-1 h-3 w-3" />
                               {t.previous}
                             </Button>
                             <Button
                               type="button"
                               onClick={() => {
                                 console.log("Submit button clicked");
-                                
+
                                 // Force validation of all fields
-                                form.trigger().then(isValid => {
-                                  console.log("Form validation result:", isValid);
-                                  
+                                form.trigger().then((isValid) => {
+                                  console.log(
+                                    "Form validation result:",
+                                    isValid
+                                  );
+
                                   if (!isValid) {
-                                    console.log("Form has errors:", form.formState.errors);
-                                    
+                                    console.log(
+                                      "Form has errors:",
+                                      form.formState.errors
+                                    );
+
                                     // Show error toast
                                     toast.error(
-                                      language === "en" 
-                                        ? "Please complete all required fields before submitting" 
+                                      language === "en"
+                                        ? "Please complete all required fields before submitting"
                                         : "Por favor complete todos los campos requeridos antes de enviar"
                                     );
-                                    
+
                                     // Navigate back to personal tab
-                                    console.log("Navigating to personal tab due to validation errors");
+                                    console.log(
+                                      "Navigating to personal tab due to validation errors"
+                                    );
                                     setActiveTab("personal");
-                                    
+
                                     // Scroll to top
                                     window.scrollTo({
                                       top: 0,
-                                      behavior: "smooth"
+                                      behavior: "smooth",
                                     });
-                                    
+
                                     // Show additional guidance toast
                                     setTimeout(() => {
                                       toast.info(
-                                        language === "en" 
-                                          ? "Please review your application starting from personal information" 
+                                        language === "en"
+                                          ? "Please review your application starting from personal information"
                                           : "Por favor revise su solicitud comenzando desde la información personal"
                                       );
                                     }, 500);
-                                    
+
                                     return;
                                   }
-                                  
+
                                   // If valid, proceed with submission
                                   console.log("Form is valid, submitting...");
                                   onSubmit(form.getValues());
                                 });
                               }}
-                              className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300"
+                              className="bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-md hover:shadow-primary/20 transition-all duration-300 py-1.5 h-auto text-sm"
                               disabled={isSubmitting}
                             >
                               {isSubmitting ? (
@@ -677,14 +743,12 @@ export default function Home() {
             </Card>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p>© 2025 Gala Foods. All rights reserved.</p>
-              <p className="mt-1">
-                {t.privacyNotice}
-              </p>
+              <p>© 2025 Media Link Tech. All rights reserved.</p>
+              <p className="mt-1">{t.privacyNotice}</p>
             </div>
           </div>
         </div>
       </div>
     </>
   );
-} 
+}

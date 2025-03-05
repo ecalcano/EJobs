@@ -128,23 +128,25 @@ export function TechnicalSkillsTab({
   const st = skillTranslations[language] as SkillTranslations;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-1">
       {/* Computer Skills */}
-      <div className="space-y-4 p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-            <Monitor className="h-5 w-5 text-blue-500" />
+      <div className="space-y-3 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+            <Monitor className="h-4 w-4 text-blue-500" />
           </div>
-          <h3 className="font-semibold text-lg text-gray-800">{t.computerSkills}</h3>
+          <h3 className="font-semibold text-base text-gray-800">
+            {t.computerSkills}
+          </h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {computerSkillsList.map((skill) => (
             <FormField
               key={skill}
               control={form.control}
               name="computerSkills"
               render={({ field }) => (
-                <FormItem className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                <FormItem className="flex items-center space-x-2 p-1.5 rounded-md hover:bg-gray-50 transition-colors duration-200">
                   <FormControl>
                     <Checkbox
                       checked={field.value?.includes(skill)}
@@ -156,10 +158,10 @@ export function TechnicalSkillsTab({
                             ) || [];
                         field.onChange(updatedList);
                       }}
-                      className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                      className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 h-4 w-4"
                     />
                   </FormControl>
-                  <FormLabel className="font-normal cursor-pointer">
+                  <FormLabel className="font-normal text-sm cursor-pointer">
                     {st[skill] || skill}
                   </FormLabel>
                 </FormItem>
@@ -170,21 +172,23 @@ export function TechnicalSkillsTab({
       </div>
 
       {/* Equipment Skills */}
-      <div className="space-y-4 p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-            <Wrench className="h-5 w-5 text-green-500" />
+      <div className="space-y-3 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+            <Wrench className="h-4 w-4 text-green-500" />
           </div>
-          <h3 className="font-semibold text-lg text-gray-800">{t.equipmentSkills}</h3>
+          <h3 className="font-semibold text-base text-gray-800">
+            {t.equipmentSkills}
+          </h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {equipmentSkillsList.map((skill) => (
             <FormField
               key={skill}
               control={form.control}
               name="equipmentSkills"
               render={({ field }) => (
-                <FormItem className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                <FormItem className="flex items-center space-x-2 p-1.5 rounded-md hover:bg-gray-50 transition-colors duration-200">
                   <FormControl>
                     <Checkbox
                       checked={field.value?.includes(skill)}
@@ -196,10 +200,10 @@ export function TechnicalSkillsTab({
                             ) || [];
                         field.onChange(updatedList);
                       }}
-                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500 h-4 w-4"
                     />
                   </FormControl>
-                  <FormLabel className="font-normal cursor-pointer">
+                  <FormLabel className="font-normal text-sm cursor-pointer">
                     {st[skill] || skill}
                   </FormLabel>
                 </FormItem>
@@ -210,21 +214,23 @@ export function TechnicalSkillsTab({
       </div>
 
       {/* Position Preferences */}
-      <div className="space-y-4 p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <Briefcase className="h-5 w-5 text-primary" />
+      <div className="space-y-3 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <Briefcase className="h-4 w-4 text-primary" />
           </div>
-          <h3 className="font-semibold text-lg text-gray-800">{t.positionPreferences}</h3>
+          <h3 className="font-semibold text-base text-gray-800">
+            {t.positionPreferences}
+          </h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {positionsList.map((position) => (
             <FormField
               key={position}
               control={form.control}
               name="positionPreferences"
               render={({ field }) => (
-                <FormItem className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                <FormItem className="flex items-center space-x-2 p-1.5 rounded-md hover:bg-gray-50 transition-colors duration-200">
                   <FormControl>
                     <Checkbox
                       checked={field.value?.includes(position)}
@@ -236,10 +242,10 @@ export function TechnicalSkillsTab({
                             ) || [];
                         field.onChange(updatedList);
                       }}
-                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary h-4 w-4"
                     />
                   </FormControl>
-                  <FormLabel className="font-normal cursor-pointer">
+                  <FormLabel className="font-normal text-sm cursor-pointer">
                     {st[position] || position}
                   </FormLabel>
                 </FormItem>
@@ -250,12 +256,14 @@ export function TechnicalSkillsTab({
       </div>
 
       {/* Other Skills */}
-      <div className="p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center">
-            <PenTool className="h-5 w-5 text-indigo-500" />
+      <div className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center">
+            <PenTool className="h-4 w-4 text-indigo-500" />
           </div>
-          <h3 className="font-semibold text-lg text-gray-800">{t.otherSkills}</h3>
+          <h3 className="font-semibold text-base text-gray-800">
+            {t.otherSkills}
+          </h3>
         </div>
         <FormField
           control={form.control}
@@ -265,7 +273,7 @@ export function TechnicalSkillsTab({
               <FormControl>
                 <Textarea
                   placeholder={t.skillPlaceholder}
-                  className="min-h-[120px] resize-none border-gray-200 focus:border-indigo-500 transition-all duration-200"
+                  className="min-h-[100px] resize-none border-gray-200 focus:border-indigo-500 transition-all duration-200 text-sm"
                   {...field}
                 />
               </FormControl>

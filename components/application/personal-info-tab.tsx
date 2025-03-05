@@ -82,94 +82,93 @@ interface PersonalInfoTabProps {
 
 export function PersonalInfoTab({ form, language }: PersonalInfoTabProps) {
   const t = localTranslations[language];
+  const common = translations[language];
   const watchPreviouslyEmployed = form.watch("previouslyEmployed");
 
   return (
-    <div className="space-y-6">
-      {/* Name */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <EnhancedFormField
-          form={form}
-          name="firstName"
-          label={t.firstName}
-          placeholder={language === "en" ? "Enter your first name" : "Ingrese su nombre"}
-          icon={<User className="h-4 w-4" />}
-          required
-          showInputStatusMessage={false}
-        />
-        <EnhancedFormField
-          form={form}
-          name="lastName"
-          label={t.lastName}
-          placeholder={language === "en" ? "Enter your last name" : "Ingrese su apellido"}
-          icon={<User className="h-4 w-4" />}
-          required
-          showInputStatusMessage={false}
-        />
-      </div>
-
-      {/* Contact */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <EnhancedFormField
-          form={form}
-          name="email"
-          label={t.email}
-          type="email"
-          placeholder={language === "en" ? "your.email@example.com" : "su.correo@ejemplo.com"}
-          icon={<Mail className="h-4 w-4" />}
-          required
-          showInputStatusMessage={false}
-        />
-        <EnhancedFormField
-          form={form}
-          name="phone"
-          label={t.phone}
-          type="tel"
-          placeholder={language === "en" ? "1234567890" : "1234567890"}
-          icon={<Phone className="h-4 w-4" />}
-          required
-          showInputStatusMessage={false}
-        />
+    <div className="space-y-3">
+      {/* Personal Information */}
+      <div className="p-3 sm:p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <h3 className="font-semibold mb-2 text-base sm:text-lg text-gray-800 flex items-center">
+          <User className="mr-2 h-4 w-4 text-primary" />
+          {common.personalInfo}
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <EnhancedFormField
+            form={form}
+            name="firstName"
+            label={t.firstName}
+            placeholder={t.firstName}
+            required
+          />
+          <EnhancedFormField
+            form={form}
+            name="lastName"
+            label={t.lastName}
+            placeholder={t.lastName}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <EnhancedFormField
+            form={form}
+            name="email"
+            label={t.email}
+            placeholder="email@example.com"
+            type="email"
+            icon={<Mail className="h-4 w-4 text-gray-500" />}
+            required
+          />
+          <EnhancedFormField
+            form={form}
+            name="phone"
+            label={t.phone}
+            placeholder="(123) 456-7890"
+            icon={<Phone className="h-4 w-4 text-gray-500" />}
+            required
+          />
+        </div>
       </div>
 
       {/* Address */}
-      <div className="space-y-4">
-        <EnhancedFormField
-          form={form}
-          name="address"
-          label={t.address}
-          placeholder={language === "en" ? "Enter your street address" : "Ingrese su dirección"}
-          icon={<Home className="h-4 w-4" />}
-          required
-          showInputStatusMessage={false}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="p-3 sm:p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300">
+        <h3 className="font-semibold mb-2 text-base sm:text-lg text-gray-800 flex items-center">
+          <MapPin className="mr-2 h-4 w-4 text-primary" />
+          {common.address}
+        </h3>
+        <div className="grid grid-cols-1 gap-3">
+          <EnhancedFormField
+            form={form}
+            name="address"
+            label={t.address}
+            placeholder={t.address}
+            icon={<Home className="h-4 w-4 text-gray-500" />}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
           <EnhancedFormField
             form={form}
             name="city"
             label={t.city}
-            placeholder={language === "en" ? "City" : "Ciudad"}
-            icon={<Building className="h-4 w-4" />}
+            placeholder={t.city}
+            icon={<Building className="h-4 w-4 text-gray-500" />}
             required
-            showInputStatusMessage={false}
           />
           <EnhancedFormField
             form={form}
             name="state"
             label={t.state}
-            placeholder={language === "en" ? "State" : "Estado"}
-            icon={<MapPin className="h-4 w-4" />}
+            placeholder={t.state}
             required
-            showInputStatusMessage={false}
           />
           <EnhancedFormField
             form={form}
             name="zipCode"
             label={t.zipCode}
-            placeholder={language === "en" ? "12345" : "12345"}
-            icon={<Hash className="h-4 w-4" />}
+            placeholder={t.zipCode}
+            icon={<Hash className="h-4 w-4 text-gray-500" />}
             required
-            showInputStatusMessage={false}
           />
         </div>
       </div>
