@@ -229,7 +229,7 @@ export default function JobsPage() {
         }
 
         .produce-grapes {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23955ba5' cx='40' cy='50' r='10'/%3E%3Ccircle fill='%23955ba5' cx='60' cy='50' r='10'/%3E%3Ccircle fill='%23955ba5' cx='50' cy='35' r='10'/%3E%3Ccircle fill='%23955ba5' cx='50' cy='65' r='10'/%3E%3Ccircle fill='%23955ba5' cx='35' cy='65' r='10'/%3E%3Ccircle fill='%23955ba5' cx='65' cy='65' r='10'/%3E%3Cpath fill='%23599044' d='M50,25c0,0,0-15,5-15s5,5,5,5S55,20,50,25z'/%3E%3C/svg%3E");
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23955ba5' cx='40' cy='50' r='10'/%3E%3Ccircle fill='%23955ba5' cx='60' cy='50' r='10'/%3E%3Ccircle fill='%23955ba5' cx='50' cy='35' r='10'/%3E%3Ccircle fill='%23955ba5' cx='50' cy='65' r='10'/%3E%3Ccircle fill='%23955ba5' cx='35' cy='65' r='10'/%3E%3Ccircle fill='%23955ba5' cx='65' cy='65' r='10'/%3E%3Cpath fill='%23599044' d='M50,25c0,0,0-15,5-15s5,5,5,5S55,25,50,25z'/%3E%3C/svg%3E");
         }
 
         .produce-strawberry {
@@ -610,8 +610,7 @@ export default function JobsPage() {
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <Logo className="w-[180px] sm:w-[200px]  opacity-90 mb-4" />
               <p className="text-gray-400 max-w-md">
-                Join our team and be part of a company that values innovation,
-                quality, and community.
+                1100 John Young Pkwy <br /> Kissimmee, FL 34741
               </p>
             </div>
             <div className="flex flex-col items-center md:items-end text-center md:text-right border-t md:border-t-0 pt-6 md:pt-0 mt-4 md:mt-0">
