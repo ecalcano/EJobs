@@ -98,7 +98,7 @@ export default function JobsPage() {
       {/* Hero Section with Modern Produce Background */}
       <div className="relative overflow-hidden bg-white min-h-[600px] lg:min-h-[500px]">
         {/* Produce Background Pattern */}
-        <div className="absolute inset-0 produce-pattern opacity-[0.08]"></div>
+        <div className="absolute inset-0 produce-pattern opacity-[1.10]"></div>
 
         {/* Enhanced Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-green-50/70 via-white to-blue-50/70"></div>
@@ -113,21 +113,21 @@ export default function JobsPage() {
         </div>
 
         {/* Decorative Produce Elements */}
-        <div className="absolute top-[10%] right-[5%] w-32 h-32 bg-contain bg-no-repeat bg-center opacity-15 produce-apple animate-float-slow"></div>
+        {/* <div className="absolute top-[10%] right-[5%] w-32 h-32 bg-contain bg-no-repeat bg-center opacity-15 produce-apple animate-float-slow"></div>
         <div className="absolute bottom-[15%] left-[8%] w-28 h-28 bg-contain bg-no-repeat bg-center opacity-15 produce-carrot animate-float-slow-reverse"></div>
         <div className="absolute top-[40%] right-[15%] w-24 h-24 bg-contain bg-no-repeat bg-center opacity-15 produce-broccoli animate-float-medium"></div>
-        <div className="absolute bottom-[2%] right-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-orange animate-float-medium-reverse"></div>
+        <div className="absolute bottom-[2%] right-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-orange animate-float-medium-reverse"></div> */}
 
         {/* Additional Produce Elements - Positioned to avoid text overlap */}
-        <div className="absolute top-[15%] left-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-tomato animate-float-medium"></div>
+        {/* <div className="absolute top-[15%] left-[5%] w-20 h-20 bg-contain bg-no-repeat bg-center opacity-15 produce-tomato animate-float-medium"></div>
         <div className="absolute top-[60%] right-[8%] w-24 h-24 bg-contain bg-no-repeat bg-center opacity-15 produce-banana animate-float-slow"></div>
         <div className="absolute bottom-[40%] left-[15%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-grapes animate-float-medium-reverse"></div>
         <div className="absolute bottom-[12%] right-[21%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-strawberry animate-float-medium"></div>
-        <div className="absolute top-[5%] right-[16%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-corn animate-float-medium-reverse"></div>
+        <div className="absolute top-[5%] right-[16%] w-16 h-16 bg-contain bg-no-repeat bg-center opacity-15 produce-corn animate-float-medium-reverse"></div> */}
 
         {/* New Produce Elements */}
-        <div className="absolute top-[8%] left-[20%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-avocado animate-float-slow-reverse"></div>
-        <div className="absolute bottom-[45%] right-[5%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-cucumber animate-float-medium-reverse"></div>
+        {/* <div className="absolute top-[8%] left-[20%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-avocado animate-float-slow-reverse"></div>
+        <div className="absolute bottom-[45%] right-[5%] w-14 h-14 bg-contain bg-no-repeat bg-center opacity-15 produce-cucumber animate-float-medium-reverse"></div> */}
 
         {/* Content Container */}
         <div className="container mx-auto relative z-10">
