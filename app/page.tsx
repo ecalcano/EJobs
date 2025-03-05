@@ -608,7 +608,7 @@ export default function JobsPage() {
         <div className="max-w-7xl mx-auto py-12 px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <Logo className="w-[180px] sm:w-[200px] filter brightness-0 invert opacity-90 mb-4" />
+              <Logo className="w-[180px] sm:w-[200px]  opacity-90 mb-4" />
               <p className="text-gray-400 max-w-md">
                 Join our team and be part of a company that values innovation,
                 quality, and community.
