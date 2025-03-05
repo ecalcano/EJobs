@@ -140,7 +140,8 @@ export default function JobsPage() {
             {/* Content Area */}
             <div className="flex-1 text-center lg:text-left lg:pl-12 xl:pl-16">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl bg-white/90 inline-block px-6 py-3 rounded-lg shadow-sm backdrop-blur-sm">
-                Join Our Team at <span className="text-primary">Store One</span>
+                Join Our Team at{" "}
+                <span className="text-primary">Compare Foods</span>
               </h1>
 
               <p className="mt-6 text-xl text-gray-600 max-w-2xl lg:max-w-none mx-auto lg:mx-0 bg-white/90 p-3 rounded-lg shadow-sm">
