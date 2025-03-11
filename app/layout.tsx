@@ -6,8 +6,8 @@ import { Logo } from "@/components/ui/logo";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Gala Foods Careers",
-  description: "Join our team at Gala Foods Supermarket",
+  title: "Compare Foods Careers",
+  description: "Join our team at Compare Foods Supermarket",
 };
 
 export default function RootLayout({

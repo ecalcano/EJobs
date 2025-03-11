@@ -68,6 +68,9 @@ import {
   ToggleLeft,
   Menu,
   X,
+  Facebook,
+  Twitter,
+  Instagram,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -1163,20 +1166,31 @@ export default function AdminPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => {
-                                      setEditingJob(job);
-                                      setShowJobDialog(true);
+                                      const jobDetails = `Are you ready for your next big opportunity? 
+We're looking for talented individuals to join our dynamic team! 
+👉 Apply today: 
+We have a great opportunity for a ${job.title} in ${job.department} at ${job.location}.`;
+                                      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(jobDetails)}`;
+                                      window.open(url, '_blank');
                                     }}
-                                    className="border-gray-200 hover:bg-gray-50"
+                                    className="flex items-center justify-center border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-full p-2"
                                   >
-                                    <Pencil className="h-4 w-4 text-gray-600" />
+                                    <Facebook className="h-4 w-4" />
                                   </Button>
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => deleteJob(job.id)}
-                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                    onClick={() => {
+                                      const jobDetails = `Are you ready for your next big opportunity? 
+We're looking for talented individuals to join our dynamic team! 
+👉 Apply today: 
+We have a great opportunity for a ${job.title} in ${job.department} at ${job.location}.`;
+                                      const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(jobDetails)}`;
+                                      window.open(url, '_blank');
+                                    }}
+                                    className="flex items-center justify-center border-blue-400 text-blue-400 hover:bg-blue-50 hover:text-blue-500 rounded-full p-2"
                                   >
-                                    <Trash2 className="h-4 w-4" />
+                                    <Twitter className="h-4 w-4" />
                                   </Button>
                                 </div>
                               </TableCell>
